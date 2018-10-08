@@ -13,6 +13,10 @@ void jolt_gui_back_callback();
 #ifndef CONFIG_JOLT_GUI_ANIM_DIGIT_MS
     #define CONFIG_JOLT_GUI_ANIM_DIGIT_MS 10
 #endif
+#ifndef CONFIG_JOLT_GUI_PIN_LEN
+    #define CONFIG_JOLT_GUI_PIN_LEN 10
+#endif
+
 
 lv_group_t *g_back;
 

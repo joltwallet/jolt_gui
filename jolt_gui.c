@@ -7,8 +7,6 @@
 /*********************
  *      DEFINES
  *********************/
-#define N_PIN_DIGITS 6
-#define PIN_SPACING 2
 
 /**********************
  *      TYPEDEFS
@@ -39,7 +37,8 @@ static lv_obj_t *statusbar_container;
 static lv_obj_t *main_menu_list;
 
 static int8_t numerical_entry_loc = -1; // Dictates function of back button
-static lv_obj_t *rollers[N_PIN_DIGITS];
+static lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
+static uint8_t pin_spacing = 0;
 
 /**********************
  *      MACROS
@@ -99,7 +98,7 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
     if(numerical_entry_loc != 0 ) {
 	    lv_obj_align(rollers[0], NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
     }
-    for(uint8_t i=0; i<N_PIN_DIGITS; i++){
+    for(uint8_t i=0; i<CONFIG_JOLT_GUI_PIN_LEN; i++){
         uint8_t n_visible = 1;
         if( i == numerical_entry_loc ) {
             n_visible = 3;
@@ -107,7 +106,7 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
         lv_roller_set_visible_row_count(rollers[i], n_visible);
         if( i > 0 ) {
 	        lv_obj_align(rollers[i], rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
-                    PIN_SPACING, 0);
+                    pin_spacing, 0);
         }
         else {
 	        lv_obj_align(rollers[i], NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
@@ -142,7 +141,6 @@ static lv_res_t jolt_gui_pin_create() {
     rollers[0] = lv_roller_create(pin_container, NULL);
 	lv_roller_set_visible_row_count(rollers[0], 3);
     lv_roller_set_anim_time(rollers[0], CONFIG_JOLT_GUI_ANIM_DIGIT_MS);
-	lv_obj_align(rollers[0], NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
 	lv_roller_set_options(rollers[0], 
             "0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
             "\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
@@ -152,13 +150,23 @@ static lv_res_t jolt_gui_pin_create() {
     lv_roller_set_action(rollers[0], digit_entry_cb);
     lv_group_add_obj(g_main, rollers[0]);
 
-    for( uint8_t i=1; i < N_PIN_DIGITS; i++ ) {
+    /* Compute Roller Spacing */
+    if( 0 == pin_spacing ) {
+        uint8_t roller_width = lv_obj_get_width(rollers[0]);
+        pin_spacing = 
+                ( lv_obj_get_width(pin_container) - 
+                  CONFIG_JOLT_GUI_PIN_LEN*roller_width ) / 
+                ( CONFIG_JOLT_GUI_PIN_LEN + 2 );
+    }
+	lv_obj_align(rollers[0], NULL, LV_ALIGN_IN_LEFT_MID, 0, pin_spacing);
+
+    for( uint8_t i=1; i<CONFIG_JOLT_GUI_PIN_LEN; i++ ) {
         rollers[i] = lv_roller_create(pin_container, rollers[0]);
 	    lv_roller_set_visible_row_count(rollers[i], 1);
 	    lv_obj_align(rollers[i], rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
-                PIN_SPACING, 0);
+                pin_spacing, 0);
     }
-    lv_roller_set_action(rollers[N_PIN_DIGITS-1], pin_entry_final_cb);
+    lv_roller_set_action(rollers[CONFIG_JOLT_GUI_PIN_LEN-1], pin_entry_final_cb);
 
     lv_group_add_obj(g_main, pin_container);
     lv_group_focus_obj(rollers[0]);
