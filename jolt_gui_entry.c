@@ -27,7 +27,7 @@
  *   GLOBAL FUNCTIONS
  **********************/
 extern int8_t numerical_entry_loc = -1;
-//extern lv_obj_t **rollers;
+extern lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
 extern uint8_t pin_spacing = 0;
 
 

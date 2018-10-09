@@ -37,6 +37,7 @@ extern lv_group_t *g_main;
 extern lv_group_t *g_back;
 extern int8_t numerical_entry_loc;
 //extern lv_obj_t **rollers;
+extern lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
 extern uint8_t pin_spacing;
 
 static lv_action_t back_release_action(lv_obj_t *btn) {
