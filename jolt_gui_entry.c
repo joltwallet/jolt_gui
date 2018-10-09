@@ -63,8 +63,24 @@ static lv_action_t digit_entry_cb(lv_obj_t *roller) {
 }
 
 static lv_action_t pin_entry_final_cb(lv_obj_t roller) {
+    uint8_t pin_array[CONFIG_JOLT_GUI_PIN_LEN] = { 0 };
+    // Parse and zero out the pin array
+    MSG("Entered PIN: ");
+    for(uint8_t i=0; i < sizeof(pin_array); i++) {
+        pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]) % 10;
+        //todo: securely zero out the rollers
+        //pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]);
+        MSG("%d ", pin_array[i]);
+    }
+    MSG("\n");
+
     // todo: compute pin hash
-    // todo: delete container
+    MSG("Computing PIN Hash\n");
+
+    jolt_gui_delete_current_screen();
+
+    // todo: call the caller callback
+
     return 0;
 }
 

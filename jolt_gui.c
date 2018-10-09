@@ -33,34 +33,40 @@ static lv_obj_t *main_menu_list;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-
-static lv_action_t back_release_action(lv_obj_t *btn) {
-    lv_obj_t *submenu = lv_group_get_focused(jolt_gui_store.group.main);
-    if( NULL == submenu ) {
+bool jolt_gui_delete_current_screen() {
+    lv_obj_t *scrn = lv_group_get_focused(jolt_gui_store.group.main);
+    if( NULL == scrn ) {
         MSG("Nothing in focus\n");
         return 0;
     }
-    if( submenu == main_menu_list ) {
+    if( scrn == main_menu_list ) {
         MSG("Can't exit main menu\n");
         return 0;
     }
 
+    // Close the current container
+    lv_group_set_focus_cb(jolt_gui_store.group.main, NULL); // Disable any focus callback
+    jolt_gui_store.digit.pos = -1; // just to be doubly sure
+    lv_obj_t *parent = scrn;
+    lv_obj_t *tmp = scrn;
+    while( tmp = lv_obj_get_parent(tmp) ) {
+        if( tmp != lv_scr_act() ) {
+            parent = tmp;
+        }
+        if( tmp == main_menu_list ) {
+            return false;
+        }
+    }
+    MSG("deleting %p\n", parent);
+    lv_obj_del(parent);
+    return true;
+}
+static lv_action_t back_release_action(lv_obj_t *btn) {
+    lv_obj_t *submenu = lv_group_get_focused(jolt_gui_store.group.main);
+
     if( jolt_gui_store.digit.pos <= 0 ) {
         // Close the current container
-        lv_group_set_focus_cb(jolt_gui_store.group.main, NULL); // Disable any focus callback
-        jolt_gui_store.digit.pos = -1; // just to be doubly sure
-        lv_obj_t *parent = submenu;
-        lv_obj_t *tmp = submenu;
-        while( tmp = lv_obj_get_parent(tmp) ) {
-            if( tmp != lv_scr_act() ) {
-                parent = tmp;
-            }
-            if( tmp == main_menu_list ) {
-                return 0;
-            }
-        }
-        MSG("deleting %p\n", parent);
-        lv_obj_del(parent);
+        jolt_gui_delete_current_screen();
     }
     else {
         // Preserve the currently selected value

@@ -37,6 +37,9 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
 /* Creates a parent object for a new screen thats easy to delete */
 lv_obj_t *jolt_gui_parent_create();
 
+/* Deletes the container of the currently focused object */
+bool jolt_gui_delete_current_screen();
+
 #ifndef CONFIG_JOLT_GUI_STATUSBAR_H
     #define CONFIG_JOLT_GUI_STATUSBAR_H 12
 #endif
