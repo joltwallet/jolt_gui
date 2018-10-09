@@ -19,8 +19,5 @@ lv_res_t jolt_gui_pin_create( void );
     #define CONFIG_JOLT_GUI_PIN_LEN 10
 #endif
 
-lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
-int8_t numerical_entry_loc; // Dictates function of back button
-uint8_t pin_spacing;
 
 #endif

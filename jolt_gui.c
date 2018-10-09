@@ -33,15 +33,9 @@ static lv_obj_t *main_menu_list;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-extern lv_group_t *g_main;
-extern lv_group_t *g_back;
-extern int8_t numerical_entry_loc;
-//extern lv_obj_t **rollers;
-extern lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
-extern uint8_t pin_spacing;
 
 static lv_action_t back_release_action(lv_obj_t *btn) {
-    lv_obj_t *submenu = lv_group_get_focused(g_main);
+    lv_obj_t *submenu = lv_group_get_focused(jolt_gui_store.group.main);
     if( NULL == submenu ) {
         MSG("Nothing in focus\n");
         return 0;
@@ -51,10 +45,10 @@ static lv_action_t back_release_action(lv_obj_t *btn) {
         return 0;
     }
 
-    if( numerical_entry_loc <= 0 ) {
+    if( jolt_gui_store.digit.pos <= 0 ) {
         // Close the current container
-        lv_group_set_focus_cb(g_main, NULL); // Disable any focus callback
-        numerical_entry_loc = -1; // just to be doubly sure
+        lv_group_set_focus_cb(jolt_gui_store.group.main, NULL); // Disable any focus callback
+        jolt_gui_store.digit.pos = -1; // just to be doubly sure
         lv_obj_t *parent = submenu;
         lv_obj_t *tmp = submenu;
         while( tmp = lv_obj_get_parent(tmp) ) {
@@ -70,13 +64,14 @@ static lv_action_t back_release_action(lv_obj_t *btn) {
     }
     else {
         // Preserve the currently selected value
-        lv_roller_ext_t *ext = lv_obj_get_ext_attr(rollers[numerical_entry_loc]);
+        lv_roller_ext_t *ext = lv_obj_get_ext_attr(
+                jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
         ext->ddlist.sel_opt_id_ori = ext->ddlist.sel_opt_id;
 
         // Decrement position and refocus
-        numerical_entry_loc--;
-        MSG("Decrementing numerical_entry_loc to %d\n", numerical_entry_loc);
-        lv_group_focus_obj(rollers[numerical_entry_loc]);
+        jolt_gui_store.digit.pos--;
+        MSG("Decrementing jolt_gui_store.digit.pos to %d\n", jolt_gui_store.digit.pos);
+        lv_group_focus_obj(jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
     }
     return 0;
 }
@@ -105,7 +100,7 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
 	lv_obj_align(menu, NULL, 
             LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
     lv_list_add(menu, img_src, txt, rel_action);
-    lv_group_add_obj(g_main, menu);
+    lv_group_add_obj(jolt_gui_store.group.main, menu);
     lv_group_focus_obj(menu);
 
 
@@ -169,13 +164,13 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     lv_theme_set_current(th);  
 
     /* Create Groups for user input */
-    g_main = lv_group_create();
-    g_back = lv_group_create();
-    lv_indev_set_group(kp_indev, g_main);
+    jolt_gui_store.group.main = lv_group_create();
+    jolt_gui_store.group.back = lv_group_create();
+    lv_indev_set_group(kp_indev, jolt_gui_store.group.main);
     // Don't need to set group since indev driver sends direct keypresses
     lv_obj_t *btn_back = lv_btn_create(lv_scr_act(), NULL);
     lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, &back_release_action);
-    lv_group_add_obj(g_back, btn_back);
+    lv_group_add_obj(jolt_gui_store.group.back, btn_back);
 
     /* Create StatusBar */
     statusbar_create();

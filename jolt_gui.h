@@ -2,13 +2,22 @@
 #define __JOLT_LVGL_GUI_H__
 
 #include "../lvgl/lvgl.h"
-//#include "jolt_gui_entry.h"
+#include "jolt_gui_entry.h"
 
 /**********************
  *   GLOBAL VARIABLES
  **********************/
-lv_group_t *g_main; // Parent group for user input
-lv_group_t *g_back; // Group used to handle back button
+struct {
+    struct {
+        lv_group_t *main; // Parent group for user input
+        lv_group_t *back; // Group used to handle back button
+    } group;
+    struct {
+        lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
+        int8_t pos; // Dictates function of back button
+        uint8_t spacing;
+    } digit;
+} jolt_gui_store;
 
 /**********************
  *   GLOBAL FUNCTIONS
