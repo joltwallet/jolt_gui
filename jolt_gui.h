@@ -2,22 +2,34 @@
 #define __JOLT_LVGL_GUI_H__
 
 #include "../lvgl/lvgl.h"
+//#include "jolt_gui_entry.h"
 
+/**********************
+ *   GLOBAL VARIABLES
+ **********************/
+lv_group_t *g_main; // Parent group for user input
+lv_group_t *g_back; // Group used to handle back button
+
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
+/* Creates the Jolt GUI */
 void jolt_gui_create(lv_indev_t *kp_indev);
 
-#define JOLT_GUI_BACK // Used to close window, or go to the left during entry
-void jolt_gui_back_callback();
+/* Creates a title in the top left statusbar. 
+ * Allocates and copies the title string. */
+lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title);
 
-#define STATUSBAR_H 12
+/* Creates a submenu of correct size, location, group, and infocus. 
+ * Need to provide arguments for first element so focus works correctly.*/
+lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src, 
+        const char *txt, lv_action_t rel_action);
 
-#ifndef CONFIG_JOLT_GUI_ANIM_DIGIT_MS
-    #define CONFIG_JOLT_GUI_ANIM_DIGIT_MS 10
+/* Creates a parent object for a new screen thats easy to delete */
+lv_obj_t *jolt_gui_parent_create();
+
+#ifndef CONFIG_JOLT_GUI_STATUSBAR_H
+    #define CONFIG_JOLT_GUI_STATUSBAR_H 12
 #endif
-#ifndef CONFIG_JOLT_GUI_PIN_LEN
-    #define CONFIG_JOLT_GUI_PIN_LEN 10
-#endif
-
-
-lv_group_t *g_back;
 
 #endif

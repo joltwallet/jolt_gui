@@ -1,3 +1,4 @@
+CSRCS += jolt_gui_entry.c
 CSRCS += jolt_gui.c
 CSRCS += lv_theme_jolt.c
 DEPPATH += --dep-path jolt_gui
