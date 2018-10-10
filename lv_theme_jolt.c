@@ -27,6 +27,8 @@
 static lv_theme_t theme;
 static lv_style_t def;
 
+static lv_style_t scrollbar_style;
+
 /*Static style definitions*/
 static lv_style_t light_plain;
 static lv_style_t dark_plain;
@@ -54,8 +56,8 @@ static void basic_init(void)
     def.body.grad_color = LV_COLOR_WHITE;
     def.body.radius = 0;
     def.body.opa = LV_OPA_COVER;
-    def.body.padding.hor = LV_DPI / 10;
-    def.body.padding.ver = LV_DPI / 10;
+    def.body.padding.hor = 3;
+    def.body.padding.ver = 3;
     def.body.padding.inner = 1;
     def.body.border.color = LV_COLOR_WHITE;
     def.body.border.width = 1;
@@ -85,15 +87,20 @@ static void basic_init(void)
     no_frame.body.border.part = 0;
 
     lv_style_copy(&dark_plain, &light_plain);
-    dark_plain.body.main_color = LV_COLOR_BLACK;
-    dark_plain.body.grad_color = LV_COLOR_BLACK;
+    dark_plain.body.main_color   = LV_COLOR_BLACK;
+    dark_plain.body.grad_color   = LV_COLOR_BLACK;
     dark_plain.body.border.color = LV_COLOR_WHITE;
-    dark_plain.text.color = LV_COLOR_WHITE;
-    dark_plain.line.color = LV_COLOR_WHITE;
-    dark_plain.image.color = LV_COLOR_WHITE;
+    dark_plain.text.color        = LV_COLOR_WHITE;
+    dark_plain.line.color        = LV_COLOR_WHITE;
+    dark_plain.image.color       = LV_COLOR_WHITE;
 
     lv_style_copy(&dark_frame, &dark_plain);
     dark_frame.body.radius = 0;
+
+    lv_style_copy(&scrollbar_style, &dark_frame);
+    scrollbar_style.body.padding.hor = 2; 
+    scrollbar_style.body.padding.ver = 2; 
+    scrollbar_style.body.padding.inner = 3; 
 
     theme.bg = &def;
     theme.panel = &light_frame;
@@ -311,7 +318,7 @@ static void page_init(void)
 #if USE_LV_PAGE
     theme.page.bg = &light_frame;
     theme.page.scrl = &light_frame;
-    theme.page.sb = &dark_frame;
+    theme.page.sb = &scrollbar_style;
 #endif
 }
 
@@ -332,7 +339,7 @@ static void list_init(void)
     lv_style_copy(&scrl, &lv_style_transp_fit);
     scrl.body.padding.inner = 1; // Make the elements only 1 pixel vertical padding while not selected
 
-    theme.list.sb = &dark_frame;
+    theme.list.sb = &scrollbar_style;
     theme.list.bg = &no_frame;
     theme.list.scrl = &scrl;
     theme.list.btn.rel = &light_plain;

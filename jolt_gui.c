@@ -104,6 +104,7 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
     /* Create List */
     lv_obj_t *menu = lv_list_create(parent, NULL);
     lv_obj_set_size(menu, LV_HOR_RES, LV_VER_RES - CONFIG_JOLT_GUI_STATUSBAR_H);
+    lv_list_set_sb_mode(menu, LV_SB_MODE_AUTO);
     lv_obj_align(menu, NULL, 
             LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
     lv_list_add(menu, img_src, txt, rel_action);
@@ -185,7 +186,8 @@ static lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn) {
     lv_obj_t *text_page = jolt_gui_text_create("Test", 
             "Would you like to send 1337 Nano to "
             "xrb_1nanode8ngaakzbck8smq6ru9bethqwyehomf79sae1k7xd47dkidjqzffeg "
-            "more text");
+            "more text; should investigate changing the word wrapping for "
+            "addresses.");
     return LV_RES_OK;
 }
 
