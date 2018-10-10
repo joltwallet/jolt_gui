@@ -206,6 +206,9 @@ static void statusbar_create() {
     //lv_img_set_src(img1, &battery_3);
 }
 
+static void group_mod_cb(lv_style_t *style) {
+    style->body.border.part = 0;
+}
 
 void jolt_gui_create(lv_indev_t *kp_indev) {
     /* Set Jolt ssd1306 theme */
@@ -219,6 +222,8 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     jolt_gui_store.group.main = lv_group_create();
     jolt_gui_store.group.back = lv_group_create();
     lv_indev_set_group(kp_indev, jolt_gui_store.group.main);
+    lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
+
     // Don't need to set group since indev driver sends direct keypresses
     lv_obj_t *btn_back = lv_btn_create(lv_scr_act(), NULL);
     lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, &back_release_action);
