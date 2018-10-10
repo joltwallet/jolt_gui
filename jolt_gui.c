@@ -115,7 +115,8 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
     return menu;
 }
 
-lv_obj_t *jolt_gui_text(const char *title, const char *body) {
+lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
+    /* Creates a page with scrollable text */
     lv_obj_t *parent = jolt_gui_parent_create();
     /* Create Statusbar Title */
     if( NULL != title ) {
@@ -181,7 +182,7 @@ static lv_res_t jolt_gui_settings_create(lv_obj_t * list_btn) {
 
 static lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn) {
     /* Dummy Text Page for Testing */
-    lv_obj_t *text_page = jolt_gui_text("Test", 
+    lv_obj_t *text_page = jolt_gui_text_create("Test", 
             "Would you like to send 1337 Nano to "
             "xrb_1nanode8ngaakzbck8smq6ru9bethqwyehomf79sae1k7xd47dkidjqzffeg "
             "more text");

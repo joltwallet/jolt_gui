@@ -42,7 +42,7 @@ lv_obj_t *jolt_gui_parent_create();
 bool jolt_gui_delete_current_screen();
 
 /* Display Text; Pressing any button returns to previous screen */
-lv_obj_t *jolt_gui_text(const char *title, const char *body);
+lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
 
 #ifndef CONFIG_JOLT_GUI_STATUSBAR_H
     #define CONFIG_JOLT_GUI_STATUSBAR_H 12
