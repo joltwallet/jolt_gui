@@ -61,6 +61,7 @@ bool jolt_gui_delete_current_screen() {
     lv_obj_del(parent);
     return true;
 }
+
 static lv_action_t back_release_action(lv_obj_t *btn) {
     lv_obj_t *submenu = lv_group_get_focused(jolt_gui_store.group.main);
 
@@ -102,20 +103,47 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
 
     /* Create List */
     lv_obj_t *menu = lv_list_create(parent, NULL);
-	lv_obj_set_size(menu, LV_HOR_RES, LV_VER_RES - CONFIG_JOLT_GUI_STATUSBAR_H);
-	lv_obj_align(menu, NULL, 
+    lv_obj_set_size(menu, LV_HOR_RES, LV_VER_RES - CONFIG_JOLT_GUI_STATUSBAR_H);
+    lv_obj_align(menu, NULL, 
             LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
     lv_list_add(menu, img_src, txt, rel_action);
     lv_group_add_obj(jolt_gui_store.group.main, menu);
     lv_group_focus_obj(menu);
-
 
     /* Create and Stylize Statusbar Title */
     jolt_gui_title_create(parent, title);
     return menu;
 }
 
+lv_obj_t *jolt_gui_text(const char *title, const char *body) {
+    /* todo: hardware button scrolling */
+    lv_obj_t *parent = jolt_gui_parent_create();
+    /* Create Statusbar Title */
+    if( NULL != title ) {
+        lv_obj_t *title_label = jolt_gui_title_create(parent, title);
+    }
+
+    /* Create Page */
+    lv_obj_t *page = lv_page_create(parent, NULL);
+    lv_obj_set_size(page, LV_HOR_RES, LV_VER_RES - CONFIG_JOLT_GUI_STATUSBAR_H);
+    lv_obj_align(page, NULL, LV_ALIGN_IN_TOP_LEFT,
+            0, CONFIG_JOLT_GUI_STATUSBAR_H);
+    lv_page_set_sb_mode(page, LV_SB_MODE_AUTO);
+    lv_group_add_obj(jolt_gui_store.group.main, page);
+
+    /* Create Text Label on Page */
+    lv_obj_t *label = lv_label_create(page, NULL);
+    lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
+    lv_obj_set_width(label, lv_page_get_scrl_width(page));  
+    lv_label_set_text(label, body);
+
+    lv_group_focus_obj(page);
+
+    return parent;
+}
+
 lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
+    /* Creates the statusbar title label */
     if( NULL == parent ) {
         parent = lv_scr_act();
     }
@@ -123,27 +151,40 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
 
     static lv_style_t label_style;
     lv_style_copy(&label_style, &lv_style_plain);
-    //lv_style_copy(&label_style, lv_obj_get_style(parent));
     label_style.body.main_color = LV_COLOR_WHITE;
-    label_style.body.padding.ver = 1;
+    label_style.body.padding.ver = 0;
+    label_style.body.padding.inner = 0;
+    //label_style.text.font = &lv_font_dejavu_10;
+    label_style.text.font = &lv_font_monospace_8;
+    label_style.body.border.opa = LV_OPA_TRANSP;
+    label_style.body.border.part = 0;
 
     lv_label_set_long_mode(label, LV_LABEL_LONG_ROLL);
     lv_label_set_body_draw(label, true); // draw background
     lv_label_set_style(label, &label_style);
     lv_obj_align(label, statusbar_container, LV_ALIGN_IN_LEFT_MID, 2, 0);
+    //lv_obj_align(label, statusbar_container, LV_ALIGN_IN_TOP_LEFT, 2, 0);
     lv_label_set_text(label, title);
-    lv_obj_set_size(label, 80, 8);
+    lv_obj_set_size(label, 80, label_style.text.font->h_px);
 
     return label;
 }
 
 static lv_res_t jolt_gui_settings_create(lv_obj_t * list_btn) {
-	/*Create the list*/
+    /*Create the list*/
     lv_obj_t *settings_list = jolt_gui_menu_create("Settings",
             NULL, "WiFi", list_release_action);
-	lv_list_add(settings_list, NULL, "Bluetooth", list_release_action);
-	lv_list_add(settings_list, NULL, "Factory Reset", list_release_action);
-    MSG("settings_list %p\n", settings_list);
+    lv_list_add(settings_list, NULL, "Bluetooth", list_release_action);
+    lv_list_add(settings_list, NULL, "Factory Reset", list_release_action);
+    return LV_RES_OK;
+}
+
+static lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn) {
+    /* Dummy Text Page for Testing */
+    lv_obj_t *text_page = jolt_gui_text("Test", 
+            "Would you like to send 1337 Nano to "
+            "xrb_1nanode8ngaakzbck8smq6ru9bethqwyehomf79sae1k7xd47dkidjqzffeg "
+            "more text");
     return LV_RES_OK;
 }
 
@@ -156,7 +197,7 @@ static void statusbar_create() {
     header_style.body.border.color = LV_COLOR_BLACK;
 
     lv_cont_set_style(statusbar_container, &header_style);
-	lv_obj_set_size(statusbar_container, LV_HOR_RES, CONFIG_JOLT_GUI_STATUSBAR_H);
+    lv_obj_set_size(statusbar_container, LV_HOR_RES, CONFIG_JOLT_GUI_STATUSBAR_H);
 
     /* TODO: create statusbar update stuff via lv_task_create() */
     //menu_label = lv_label_create(statusbar_container, NULL);
@@ -164,9 +205,13 @@ static void statusbar_create() {
     //lv_img_set_src(img1, &battery_3);
 }
 
+
 void jolt_gui_create(lv_indev_t *kp_indev) {
     /* Set Jolt ssd1306 theme */
-    lv_theme_t *th = lv_theme_jolt_init(100, NULL);
+    //lv_theme_t *th = lv_theme_jolt_init(100, &orange_kid);
+    //lv_theme_t *th = lv_theme_jolt_init(100, &lv_font_monospace_8);
+    //lv_theme_t *th = lv_theme_jolt_init(100, &f_6x10);
+    lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
     lv_theme_set_current(th);  
 
     /* Create Groups for user input */
@@ -181,14 +226,15 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     /* Create StatusBar */
     statusbar_create();
 
-	/*Create the list*/
+    /*Create the list*/
     main_menu_list = jolt_gui_menu_create("Main", NULL, "Nano",
             jolt_gui_pin_create);
-	lv_list_add(main_menu_list, NULL, "Bitcoin", list_release_action);
-	lv_list_add(main_menu_list, NULL, "Ethereum", list_release_action);
-	lv_list_add(main_menu_list, NULL, "Monero", list_release_action);
-	lv_list_add(main_menu_list, NULL, "Console", list_release_action);
-	lv_list_add(main_menu_list, NULL, "Settings", jolt_gui_settings_create);
+    lv_list_add(main_menu_list, NULL, "Bitcoin", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Ethereum", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Monero", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Test", jolt_gui_test_text_create);
+    lv_list_add(main_menu_list, NULL, "Console", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Settings", jolt_gui_settings_create);
 
     MSG("main_menu_list: %p\n", main_menu_list);
 }

@@ -2,6 +2,7 @@
 #define __JOLT_LVGL_GUI_H__
 
 #include "../lvgl/lvgl.h"
+#include "../lv_conf.h"
 #include "jolt_gui_entry.h"
 
 /**********************
@@ -39,6 +40,9 @@ lv_obj_t *jolt_gui_parent_create();
 
 /* Deletes the container of the currently focused object */
 bool jolt_gui_delete_current_screen();
+
+/* Display Text; Pressing any button returns to previous screen */
+lv_obj_t *jolt_gui_text(const char *title, const char *body);
 
 #ifndef CONFIG_JOLT_GUI_STATUSBAR_H
     #define CONFIG_JOLT_GUI_STATUSBAR_H 12

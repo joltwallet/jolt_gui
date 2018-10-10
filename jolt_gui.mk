@@ -1,9 +1,13 @@
+
+include ./jolt_gui/custom_fonts/custom_fonts.mk
+
 CSRCS += jolt_gui_entry.c
 CSRCS += jolt_gui.c
 CSRCS += lv_theme_jolt.c
 DEPPATH += --dep-path jolt_gui
 VPATH += :jolt_gui
 CFLAGS += "-I$(LVGL_DIR)/jolt_gui"
+
 
 # Custom Fonts
 #CSRCS += custom_fonts/unscii.c
