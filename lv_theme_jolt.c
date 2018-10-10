@@ -98,9 +98,8 @@ static void basic_init(void)
     dark_frame.body.radius = 0;
 
     lv_style_copy(&scrollbar_style, &dark_frame);
-    scrollbar_style.body.padding.hor = 2; 
-    scrollbar_style.body.padding.ver = 2; 
-    scrollbar_style.body.padding.inner = 3; 
+    scrollbar_style.body.padding.hor = 0; // Distance from the Right 
+    scrollbar_style.body.padding.inner = 4; // Scrollbar's Width 
 
     theme.bg = &def;
     theme.panel = &light_frame;

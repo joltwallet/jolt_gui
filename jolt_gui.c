@@ -136,7 +136,12 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
     /* Create Text Label on Page */
     lv_obj_t *label = lv_label_create(page, NULL);
     lv_label_set_long_mode(label, LV_LABEL_LONG_BREAK);
-    lv_obj_set_width(label, lv_page_get_scrl_width(page));  
+    {
+        // Compute Width of Label
+        lv_style_t *sb = lv_page_get_style(page, LV_PAGE_STYLE_SB);
+        lv_obj_set_width(label, lv_page_get_scrl_width(page) - 
+                sb->body.padding.inner - sb->body.padding.hor);  
+    }
     lv_label_set_text(label, body);
 
     lv_group_focus_obj(page);
