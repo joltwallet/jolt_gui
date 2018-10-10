@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "lv_theme_jolt.h"
 #include "jolt_gui_entry.h"
+#include "jolt_gui_symbols.h"
 
 /*********************
  *      DEFINES
@@ -207,6 +208,14 @@ static void statusbar_create() {
     lv_cont_set_style(statusbar_container, &header_style);
     lv_obj_set_size(statusbar_container, LV_HOR_RES, CONFIG_JOLT_GUI_STATUSBAR_H);
 
+    static lv_style_t status_style;
+    lv_style_copy(&status_style, &header_style);
+    status_style.text.font = &jolt_gui_symbols;
+    lv_obj_t *battery = lv_label_create(statusbar_container, NULL);
+    lv_label_set_style(battery, &status_style);
+    lv_label_set_text(battery, JOLT_GUI_SYMBOL_BATTERY_3);
+    lv_obj_align(battery, statusbar_container, LV_ALIGN_IN_RIGHT_MID, 0, 0);
+
     /* TODO: create statusbar update stuff via lv_task_create() */
     //menu_label = lv_label_create(statusbar_container, NULL);
     //lv_obj_t * img1 = lv_img_create(statusbar_container, NULL);
@@ -222,6 +231,7 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     //lv_theme_t *th = lv_theme_jolt_init(100, &orange_kid);
     //lv_theme_t *th = lv_theme_jolt_init(100, &lv_font_monospace_8);
     //lv_theme_t *th = lv_theme_jolt_init(100, &f_6x10);
+    lv_font_add(&jolt_gui_symbols, &synchronizer7);
     lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
     lv_theme_set_current(th);  
 
