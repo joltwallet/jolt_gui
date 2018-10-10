@@ -116,7 +116,6 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
 }
 
 lv_obj_t *jolt_gui_text(const char *title, const char *body) {
-    /* todo: hardware button scrolling */
     lv_obj_t *parent = jolt_gui_parent_create();
     /* Create Statusbar Title */
     if( NULL != title ) {
@@ -130,6 +129,7 @@ lv_obj_t *jolt_gui_text(const char *title, const char *body) {
             0, CONFIG_JOLT_GUI_STATUSBAR_H);
     lv_page_set_sb_mode(page, LV_SB_MODE_AUTO);
     lv_group_add_obj(jolt_gui_store.group.main, page);
+    lv_page_set_arrow_scroll(page, true);
 
     /* Create Text Label on Page */
     lv_obj_t *label = lv_label_create(page, NULL);
