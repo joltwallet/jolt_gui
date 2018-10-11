@@ -204,6 +204,41 @@ static void statusbar_update() {
     char statusbar_symbols[20] = { 0 };
     char *ptr = statusbar_symbols;
 
+    uint8_t lock_status;
+    lock_status = get_lock_status();
+    if( lock_status == 0 ) {
+    }
+    else {
+        strcpy(ptr, JOLT_GUI_SYMBOL_LOCK);
+        ptr += 3;
+    }
+
+    uint8_t bluetooth_level;
+    bluetooth_level = get_bluetooth_level();
+    if( bluetooth_level == 0 ){
+    }
+    else {
+        strcpy(ptr, JOLT_GUI_SYMBOL_BLUETOOTH);
+        ptr += 3;
+    }
+
+    uint8_t wifi_level;
+    wifi_level = get_wifi_level();
+    if( wifi_level == 0 ) {
+    }
+    else if (wifi_level <= 55) {
+        strcpy(ptr, JOLT_GUI_SYMBOL_WIFI_3);
+        ptr += 3;
+    }
+    else if (wifi_level <= 75) {
+        strcpy(ptr, JOLT_GUI_SYMBOL_WIFI_2);
+        ptr += 3;
+    }
+    else {
+        strcpy(ptr, JOLT_GUI_SYMBOL_WIFI_1);
+        ptr += 3;
+    }
+
     uint8_t battery_level = get_battery_level();
     MSG("Battery_level: %d\n", battery_level);
     if( battery_level > 100 ) {
@@ -223,11 +258,9 @@ static void statusbar_update() {
     }
     ptr += 3;
 
-
     lv_label_set_text(statusbar_indicators, statusbar_symbols);
     lv_obj_align(statusbar_indicators, statusbar_container,
             LV_ALIGN_IN_RIGHT_MID, 0, 0);
-
 }
 
 static void statusbar_create() {
