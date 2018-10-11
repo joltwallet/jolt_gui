@@ -71,7 +71,7 @@ static lv_action_t pin_entry_final_cb(lv_obj_t roller) {
     // Parse and zero out the pin array
     MSG("Entered PIN: ");
     for(uint8_t i=0; i < sizeof(pin_array); i++) {
-        pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]) % 10;
+        pin_array[i] = 9 - (lv_roller_get_selected(jolt_gui_store.digit.rollers[i]) % 10);
         //todo: securely zero out the rollers
         //pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]);
         MSG("%d ", pin_array[i]);
@@ -95,11 +95,12 @@ static lv_obj_t *digit_create(lv_obj_t *parent) {
 	lv_roller_set_visible_row_count(roller, 3);
     lv_roller_set_anim_time(roller, CONFIG_JOLT_GUI_ANIM_DIGIT_MS);
 	lv_roller_set_options(roller, 
-            "0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
-            "\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
-            "\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
+            "9\n8\n7\n6\n5\n4\n3\n2\n1\n0"
+            "\n9\n8\n7\n6\n5\n4\n3\n2\n1\n0"
+            "\n9\n8\n7\n6\n5\n4\n3\n2\n1\n0"
+            "\n9\n8\n7\n6\n5\n4\n3\n2\n1\n0"
             );
-    lv_roller_set_selected(roller, 10, false); // Set it to the middle 0 entry
+    lv_roller_set_selected(roller, 19, false); // Set it to the middle 0 entry
     lv_roller_set_action(roller, digit_entry_cb);
     lv_group_add_obj(jolt_gui_store.group.main, roller);
     return roller;
