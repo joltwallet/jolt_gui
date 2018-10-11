@@ -48,7 +48,7 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
     #define CONFIG_JOLT_GUI_STATUSBAR_H 12
 #endif
 #ifndef CONFIG_JOLT_GUI_TITLE_W
-    #define CONFIG_JOLT_GUI_TITLE_W 80
+    #define CONFIG_JOLT_GUI_TITLE_W 70
 #endif
 
 #endif

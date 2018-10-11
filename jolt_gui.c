@@ -171,8 +171,7 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
     label_style.body.main_color = LV_COLOR_WHITE;
     label_style.body.padding.ver = 0;
     label_style.body.padding.inner = 0;
-    //label_style.text.font = &lv_font_dejavu_10;
-    label_style.text.font = &lv_font_monospace_8;
+    label_style.text.font = &lv_font_monospace_8; // todo: better looking font
     label_style.body.border.opa = LV_OPA_TRANSP;
     label_style.body.border.part = 0;
 
@@ -283,10 +282,7 @@ static void group_mod_cb(lv_style_t *style) {
 
 void jolt_gui_create(lv_indev_t *kp_indev) {
     /* Set Jolt ssd1306 theme */
-    //lv_theme_t *th = lv_theme_jolt_init(100, &orange_kid);
-    //lv_theme_t *th = lv_theme_jolt_init(100, &lv_font_monospace_8);
-    lv_theme_t *th = lv_theme_jolt_init(100, &f_6x10);
-    //lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
+    lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
     lv_theme_set_current(th);  
 
     /* Create Groups for user input */
