@@ -4,6 +4,7 @@
 #include "../lvgl/lvgl.h"
 #include "../lv_conf.h"
 #include "jolt_gui_entry.h"
+#include "stubs.h"
 
 /**********************
  *   GLOBAL VARIABLES
@@ -46,6 +47,9 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
 
 #ifndef CONFIG_JOLT_GUI_STATUSBAR_H
     #define CONFIG_JOLT_GUI_STATUSBAR_H 12
+#endif
+#ifndef CONFIG_JOLT_GUI_TITLE_W
+    #define CONFIG_JOLT_GUI_TITLE_W 80
 #endif
 
 #endif

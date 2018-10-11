@@ -3,6 +3,7 @@
 #include "lv_theme_jolt.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_symbols.h"
+#include "stubs.h"
 
 /*********************
  *      DEFINES
@@ -25,6 +26,7 @@ static lv_res_t list_release_action(lv_obj_t * list_btn);
  **********************/
 static lv_obj_t *statusbar_container;
 static lv_obj_t *main_menu_list;
+static lv_obj_t *statusbar_indicators;
 
 /**********************
  *      MACROS
@@ -50,7 +52,7 @@ bool jolt_gui_delete_current_screen() {
     jolt_gui_store.digit.pos = -1; // just to be doubly sure
     lv_obj_t *parent = scrn;
     lv_obj_t *tmp = scrn;
-    while( tmp = lv_obj_get_parent(tmp) ) {
+    while( (tmp = lv_obj_get_parent(tmp)) ) {
         if( tmp != lv_scr_act() ) {
             parent = tmp;
         }
@@ -122,7 +124,7 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
     lv_obj_t *parent = jolt_gui_parent_create();
     /* Create Statusbar Title */
     if( NULL != title ) {
-        lv_obj_t *title_label = jolt_gui_title_create(parent, title);
+        jolt_gui_title_create(parent, title);
     }
 
     /* Create Page */
@@ -173,7 +175,7 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
     lv_obj_align(label, statusbar_container, LV_ALIGN_IN_LEFT_MID, 2, 0);
     //lv_obj_align(label, statusbar_container, LV_ALIGN_IN_TOP_LEFT, 2, 0);
     lv_label_set_text(label, title);
-    lv_obj_set_size(label, 80, label_style.text.font->h_px);
+    lv_obj_set_size(label, CONFIG_JOLT_GUI_TITLE_W, label_style.text.font->h_px);
 
     return label;
 }
@@ -189,12 +191,43 @@ static lv_res_t jolt_gui_settings_create(lv_obj_t * list_btn) {
 
 static lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn) {
     /* Dummy Text Page for Testing */
-    lv_obj_t *text_page = jolt_gui_text_create("Test", 
+    jolt_gui_text_create("Test", 
             "Would you like to send 1337 Nano to "
             "xrb_1nanode8ngaakzbck8smq6ru9bethqwyehomf79sae1k7xd47dkidjqzffeg "
             "more text; should investigate changing the word wrapping for "
             "addresses.");
     return LV_RES_OK;
+}
+
+static void statusbar_update() {
+
+    char statusbar_symbols[20] = { 0 };
+    char *ptr = statusbar_symbols;
+
+    uint8_t battery_level = get_battery_level();
+    MSG("Battery_level: %d\n", battery_level);
+    if( battery_level > 100 ) {
+        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_CHARGING);
+    }
+    else if( battery_level > 70 ) {
+        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_3);
+    }
+    else if( battery_level > 45 ) {
+        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_2);
+    }
+    else if( battery_level > 15 ) {
+        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_1);
+    }
+    else {
+        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_EMPTY);
+    }
+    ptr += 3;
+
+
+    lv_label_set_text(statusbar_indicators, statusbar_symbols);
+    lv_obj_align(statusbar_indicators, statusbar_container,
+            LV_ALIGN_IN_RIGHT_MID, 0, 0);
+
 }
 
 static void statusbar_create() {
@@ -211,15 +244,19 @@ static void statusbar_create() {
     static lv_style_t status_style;
     lv_style_copy(&status_style, &header_style);
     status_style.text.font = &jolt_gui_symbols;
-    lv_obj_t *battery = lv_label_create(statusbar_container, NULL);
-    lv_label_set_style(battery, &status_style);
-    lv_label_set_text(battery, JOLT_GUI_SYMBOL_BATTERY_3);
-    lv_obj_align(battery, statusbar_container, LV_ALIGN_IN_RIGHT_MID, 0, 0);
+    status_style.body.padding.hor = 1;
 
-    /* TODO: create statusbar update stuff via lv_task_create() */
-    //menu_label = lv_label_create(statusbar_container, NULL);
-    //lv_obj_t * img1 = lv_img_create(statusbar_container, NULL);
-    //lv_img_set_src(img1, &battery_3);
+    statusbar_indicators = lv_label_create(statusbar_container, NULL);
+    lv_label_set_style(statusbar_indicators, &status_style);
+    lv_obj_set_size(statusbar_indicators,
+            LV_HOR_RES - CONFIG_JOLT_GUI_TITLE_W, 
+            status_style.text.font->h_px);
+    lv_obj_align(statusbar_indicators, statusbar_container,
+            LV_ALIGN_IN_RIGHT_MID, 0, 0);
+
+    /* Periodically update the statusbar symbols */
+    statusbar_update();
+    lv_task_create(&statusbar_update, 2000, LV_TASK_PRIO_LOW, NULL);
 }
 
 static void group_mod_cb(lv_style_t *style) {
