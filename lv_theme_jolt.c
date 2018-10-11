@@ -366,9 +366,9 @@ static void roller_init(void)
 #if USE_LV_ROLLER != 0
     static lv_style_t bg;
     lv_style_copy(&bg, &light_frame);
-    bg.body.padding.hor=3; // Width of the roller
-    bg.body.padding.inner=10;
-    bg.text.line_space = 10;
+    bg.body.padding.hor=2; // Width of the roller
+    bg.text.line_space = 0; // Distance between options
+    bg.text.font = &lv_font_dejavu_20;
     theme.roller.bg = &bg;
 
     static lv_style_t sel;

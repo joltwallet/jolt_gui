@@ -3,7 +3,7 @@
 #if PC_SIMULATOR
 #include "../lvgl/lvgl.h"
 #include "../lv_conf.h"
-#include "stubs.h"
+#include "test_stubs.h"
 
 uint8_t get_battery_level() {
     /* Responds with a value between 0 and 100.
@@ -34,6 +34,12 @@ uint8_t get_lock_status() {
     static uint8_t level = 0;
     level = !level;
     return level;
+}
+
+lv_res_t list_release_action(lv_obj_t * list_btn) {
+    /* PLACEHOLDER STUB*/
+    printf("List element click:%s\n", lv_list_get_btn_text(list_btn));
+    return LV_RES_OK; /*Return OK because the list is not deleted*/
 }
 
 #endif

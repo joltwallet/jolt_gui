@@ -4,7 +4,6 @@
 #include "../lvgl/lvgl.h"
 #include "../lv_conf.h"
 #include "jolt_gui_entry.h"
-#include "stubs.h"
 
 /**********************
  *   GLOBAL VARIABLES

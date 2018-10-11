@@ -98,7 +98,7 @@ static const uint8_t jolt_gui_symbols_glyph_bitmap[] =
     /* Unicode: U+F008, Width: 9 */
     0x00, 0x00,   //.........
     0x3E, 0x00,   //..@@@@@..
-    0x42, 0x00,   //.@.....@.
+    0x41, 0x00,   //.@.....@.
     0x9C, 0x80,   //@..@@@..@
     0x22, 0x00,   //..@...@..
     0x49, 0x00,   //.@..@..@.
@@ -110,7 +110,7 @@ static const uint8_t jolt_gui_symbols_glyph_bitmap[] =
     0x30,   //..@@..
     0x48,   //.@..@.
     0x48,   //.@..@.
-    0x48,   //.@..@.
+    0xFC,   //@@@@@@
     0xFC,   //@@@@@@
     0xFC,   //@@@@@@
     0xFC,   //@@@@@@

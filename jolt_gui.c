@@ -3,7 +3,13 @@
 #include "lv_theme_jolt.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_symbols.h"
-#include "stubs.h"
+
+#if PC_SIMULATOR
+    #include "test_stubs.h"
+    #include "test_screens.h"
+#elif ESP_PLATFORM
+    //todo include required jolt libraries here
+#endif
 
 /*********************
  *      DEFINES
@@ -16,22 +22,27 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static lv_res_t jolt_gui_settings_create(lv_obj_t * list_btn);
-
-/* Stubs */
-static lv_res_t list_release_action(lv_obj_t * list_btn);
+static lv_action_t back_release_action(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
 static lv_obj_t *statusbar_container;
-static lv_obj_t *main_menu_list;
 static lv_obj_t *statusbar_indicators;
+static lv_obj_t *main_menu_list;
 
 /**********************
  *      MACROS
  **********************/
-#define MSG(...) printf(__VA_ARGS__)
+#if PC_SIMULATOR
+    #define MSG(...) printf(__VA_ARGS__)
+#elif ESP_PLATFORM
+    #include "esp_log.h"
+    static const char TAG[] = "jolt_gui"
+    #define MSG(...) ESP_LOGI(TAG, __VA_ARGS__)
+#else
+    #define MSG(...) printf(__VA_ARGS__)
+#endif
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -47,8 +58,8 @@ bool jolt_gui_delete_current_screen() {
         return 0;
     }
 
-    // Close the current container
-    lv_group_set_focus_cb(jolt_gui_store.group.main, NULL); // Disable any focus callback
+    // Disable any focus callback
+    lv_group_set_focus_cb(jolt_gui_store.group.main, NULL);
     jolt_gui_store.digit.pos = -1; // just to be doubly sure
     lv_obj_t *parent = scrn;
     lv_obj_t *tmp = scrn;
@@ -69,27 +80,23 @@ static lv_action_t back_release_action(lv_obj_t *btn) {
     lv_obj_t *submenu = lv_group_get_focused(jolt_gui_store.group.main);
 
     if( jolt_gui_store.digit.pos <= 0 ) {
-        // Close the current container
+        /* Close the current container */
         jolt_gui_delete_current_screen();
     }
     else {
-        // Preserve the currently selected value
+        /* Preserve the currently selected roller value */
         lv_roller_ext_t *ext = lv_obj_get_ext_attr(
                 jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
         ext->ddlist.sel_opt_id_ori = ext->ddlist.sel_opt_id;
 
-        // Decrement position and refocus
+        /* Decrement position and refocus */
         jolt_gui_store.digit.pos--;
-        MSG("Decrementing jolt_gui_store.digit.pos to %d\n", jolt_gui_store.digit.pos);
-        lv_group_focus_obj(jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
+        MSG("Decrementing jolt_gui_store.digit.pos to %d\n",
+                jolt_gui_store.digit.pos);
+        lv_group_focus_obj(jolt_gui_store.digit.rollers[
+                jolt_gui_store.digit.pos]);
     }
     return 0;
-}
-
-static lv_res_t list_release_action(lv_obj_t * list_btn) {
-    /* PLACEHOLDER STUB*/
-    MSG("List element click:%s\n", lv_list_get_btn_text(list_btn));
-    return LV_RES_OK; /*Return OK because the list is not deleted*/
 }
 
 lv_obj_t *jolt_gui_parent_create() {
@@ -173,30 +180,10 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
     lv_label_set_body_draw(label, true); // draw background
     lv_label_set_style(label, &label_style);
     lv_obj_align(label, statusbar_container, LV_ALIGN_IN_LEFT_MID, 2, 0);
-    //lv_obj_align(label, statusbar_container, LV_ALIGN_IN_TOP_LEFT, 2, 0);
     lv_label_set_text(label, title);
     lv_obj_set_size(label, CONFIG_JOLT_GUI_TITLE_W, label_style.text.font->h_px);
 
     return label;
-}
-
-static lv_res_t jolt_gui_settings_create(lv_obj_t * list_btn) {
-    /*Create the list*/
-    lv_obj_t *settings_list = jolt_gui_menu_create("Settings",
-            NULL, "WiFi", list_release_action);
-    lv_list_add(settings_list, NULL, "Bluetooth", list_release_action);
-    lv_list_add(settings_list, NULL, "Factory Reset", list_release_action);
-    return LV_RES_OK;
-}
-
-static lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn) {
-    /* Dummy Text Page for Testing */
-    jolt_gui_text_create("Test", 
-            "Would you like to send 1337 Nano to "
-            "xrb_1nanode8ngaakzbck8smq6ru9bethqwyehomf79sae1k7xd47dkidjqzffeg "
-            "more text; should investigate changing the word wrapping for "
-            "addresses.");
-    return LV_RES_OK;
 }
 
 static void statusbar_update() {
@@ -260,7 +247,7 @@ static void statusbar_update() {
 
     lv_label_set_text(statusbar_indicators, statusbar_symbols);
     lv_obj_align(statusbar_indicators, statusbar_container,
-            LV_ALIGN_IN_RIGHT_MID, 0, 0);
+            LV_ALIGN_IN_RIGHT_MID, -1, 0);
 }
 
 static void statusbar_create() {
@@ -284,8 +271,6 @@ static void statusbar_create() {
     lv_obj_set_size(statusbar_indicators,
             LV_HOR_RES - CONFIG_JOLT_GUI_TITLE_W, 
             status_style.text.font->h_px);
-    lv_obj_align(statusbar_indicators, statusbar_container,
-            LV_ALIGN_IN_RIGHT_MID, 0, 0);
 
     /* Periodically update the statusbar symbols */
     statusbar_update();
@@ -300,9 +285,8 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     /* Set Jolt ssd1306 theme */
     //lv_theme_t *th = lv_theme_jolt_init(100, &orange_kid);
     //lv_theme_t *th = lv_theme_jolt_init(100, &lv_font_monospace_8);
-    //lv_theme_t *th = lv_theme_jolt_init(100, &f_6x10);
-    lv_font_add(&jolt_gui_symbols, &synchronizer7);
-    lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
+    lv_theme_t *th = lv_theme_jolt_init(100, &f_6x10);
+    //lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
     lv_theme_set_current(th);  
 
     /* Create Groups for user input */
@@ -320,14 +304,15 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     statusbar_create();
 
     /*Create the list*/
-    main_menu_list = jolt_gui_menu_create("Main", NULL, "Nano",
+#if PC_SIMULATOR
+    main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
             jolt_gui_pin_create);
-    lv_list_add(main_menu_list, NULL, "Bitcoin", list_release_action);
-    lv_list_add(main_menu_list, NULL, "Ethereum", list_release_action);
-    lv_list_add(main_menu_list, NULL, "Monero", list_release_action);
-    lv_list_add(main_menu_list, NULL, "Test", jolt_gui_test_text_create);
-    lv_list_add(main_menu_list, NULL, "Console", list_release_action);
-    lv_list_add(main_menu_list, NULL, "Settings", jolt_gui_settings_create);
+    lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
+    lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);
+#endif
 
     MSG("main_menu_list: %p\n", main_menu_list);
 }

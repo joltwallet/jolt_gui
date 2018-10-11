@@ -40,13 +40,17 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
         if( i == jolt_gui_store.digit.pos ) {
             n_visible = 3;
         }
-        lv_roller_set_visible_row_count(jolt_gui_store.digit.rollers[i], n_visible);
+        lv_roller_set_visible_row_count(jolt_gui_store.digit.rollers[i],
+                n_visible);
         if( i > 0 ) {
-	        lv_obj_align(jolt_gui_store.digit.rollers[i], jolt_gui_store.digit.rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
+	        lv_obj_align(jolt_gui_store.digit.rollers[i],
+                    jolt_gui_store.digit.rollers[i-1],
+                    LV_ALIGN_OUT_RIGHT_MID, 
                     jolt_gui_store.digit.spacing, 0);
         }
         else {
-	        lv_obj_align(jolt_gui_store.digit.rollers[i], NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
+	        lv_obj_align(jolt_gui_store.digit.rollers[i], NULL,
+                    LV_ALIGN_IN_LEFT_MID, 0, 0);
         }
     }
     return 0;
@@ -121,12 +125,14 @@ lv_res_t jolt_gui_pin_create( void ) {
                   CONFIG_JOLT_GUI_PIN_LEN*roller_width ) / 
                 ( CONFIG_JOLT_GUI_PIN_LEN + 2 );
     }
-	lv_obj_align(jolt_gui_store.digit.rollers[0], NULL, LV_ALIGN_IN_LEFT_MID, 0, jolt_gui_store.digit.spacing);
+	lv_obj_align(jolt_gui_store.digit.rollers[0], NULL,
+            LV_ALIGN_IN_LEFT_MID, 0, jolt_gui_store.digit.spacing);
 
     for( uint8_t i=1; i<CONFIG_JOLT_GUI_PIN_LEN; i++ ) {
         jolt_gui_store.digit.rollers[i] = lv_roller_create(pin_container, jolt_gui_store.digit.rollers[0]);
 	    lv_roller_set_visible_row_count(jolt_gui_store.digit.rollers[i], 1);
-	    lv_obj_align(jolt_gui_store.digit.rollers[i], jolt_gui_store.digit.rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
+	    lv_obj_align(jolt_gui_store.digit.rollers[i],
+                jolt_gui_store.digit.rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
                 jolt_gui_store.digit.spacing, 0);
     }
     lv_roller_set_action(jolt_gui_store.digit.rollers[CONFIG_JOLT_GUI_PIN_LEN-1], pin_entry_final_cb);
