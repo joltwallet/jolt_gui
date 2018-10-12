@@ -3,6 +3,7 @@
 #include "lv_theme_jolt.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_symbols.h"
+#include "jolt_gui_statusbar.h"
 
 #if PC_SIMULATOR
     #include "test_stubs.h"
@@ -27,8 +28,6 @@ static lv_action_t back_release_action(lv_obj_t *btn);
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t *statusbar_container;
-static lv_obj_t *statusbar_indicators;
 static lv_obj_t *main_menu_list;
 
 /**********************
@@ -178,102 +177,11 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
     lv_label_set_long_mode(label, LV_LABEL_LONG_ROLL);
     lv_label_set_body_draw(label, true); // draw background
     lv_label_set_style(label, &label_style);
-    lv_obj_align(label, statusbar_container, LV_ALIGN_IN_LEFT_MID, 2, 0);
+    lv_obj_align(label, jolt_gui_store.statusbar.container, LV_ALIGN_IN_LEFT_MID, 2, 0);
     lv_label_set_text(label, title);
     lv_obj_set_size(label, CONFIG_JOLT_GUI_TITLE_W, label_style.text.font->h_px);
 
     return label;
-}
-
-static void statusbar_update() {
-
-    char statusbar_symbols[20] = { 0 };
-    char *ptr = statusbar_symbols;
-
-    uint8_t lock_status;
-    lock_status = get_lock_status();
-    if( lock_status == 0 ) {
-    }
-    else {
-        strcpy(ptr, JOLT_GUI_SYMBOL_LOCK);
-        ptr += 3;
-    }
-
-    uint8_t bluetooth_level;
-    bluetooth_level = get_bluetooth_level();
-    if( bluetooth_level == 0 ){
-    }
-    else {
-        strcpy(ptr, JOLT_GUI_SYMBOL_BLUETOOTH);
-        ptr += 3;
-    }
-
-    uint8_t wifi_level;
-    wifi_level = get_wifi_level();
-    if( wifi_level == 0 ) {
-    }
-    else if (wifi_level <= 55) {
-        strcpy(ptr, JOLT_GUI_SYMBOL_WIFI_3);
-        ptr += 3;
-    }
-    else if (wifi_level <= 75) {
-        strcpy(ptr, JOLT_GUI_SYMBOL_WIFI_2);
-        ptr += 3;
-    }
-    else {
-        strcpy(ptr, JOLT_GUI_SYMBOL_WIFI_1);
-        ptr += 3;
-    }
-
-    uint8_t battery_level = get_battery_level();
-    MSG("Battery_level: %d\n", battery_level);
-    if( battery_level > 100 ) {
-        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_CHARGING);
-    }
-    else if( battery_level > 70 ) {
-        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_3);
-    }
-    else if( battery_level > 45 ) {
-        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_2);
-    }
-    else if( battery_level > 15 ) {
-        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_1);
-    }
-    else {
-        strcpy(ptr, JOLT_GUI_SYMBOL_BATTERY_EMPTY);
-    }
-    ptr += 3;
-
-    lv_label_set_text(statusbar_indicators, statusbar_symbols);
-    lv_obj_align(statusbar_indicators, statusbar_container,
-            LV_ALIGN_IN_RIGHT_MID, -1, 0);
-}
-
-static void statusbar_create() {
-    /* Create StatusBar Container */
-    static lv_style_t header_style;
-    statusbar_container = lv_cont_create(lv_scr_act(), NULL);
-    lv_style_copy(&header_style, lv_cont_get_style(statusbar_container) );
-    header_style.body.border.part = LV_BORDER_BOTTOM;
-    header_style.body.border.color = LV_COLOR_BLACK;
-
-    lv_cont_set_style(statusbar_container, &header_style);
-    lv_obj_set_size(statusbar_container, LV_HOR_RES, CONFIG_JOLT_GUI_STATUSBAR_H);
-
-    static lv_style_t status_style;
-    lv_style_copy(&status_style, &header_style);
-    status_style.text.font = &jolt_gui_symbols;
-    status_style.body.padding.hor = 1;
-
-    statusbar_indicators = lv_label_create(statusbar_container, NULL);
-    lv_label_set_style(statusbar_indicators, &status_style);
-    lv_obj_set_size(statusbar_indicators,
-            LV_HOR_RES - CONFIG_JOLT_GUI_TITLE_W, 
-            status_style.text.font->h_px);
-
-    /* Periodically update the statusbar symbols */
-    statusbar_update();
-    lv_task_create(&statusbar_update, 2000, LV_TASK_PRIO_LOW, NULL);
 }
 
 static void group_mod_cb(lv_style_t *style) {

@@ -4,6 +4,7 @@
 #include "../lvgl/lvgl.h"
 #include "../lv_conf.h"
 #include "jolt_gui_entry.h"
+#include "jolt_gui_statusbar.h"
 
 /**********************
  *   GLOBAL VARIABLES
@@ -18,6 +19,11 @@ struct {
         int8_t pos; // Dictates function of back button
         uint8_t spacing;
     } digit;
+    struct {
+        lv_obj_t *container;
+        lv_obj_t *label;
+        hardware_monitor_t indicators[JOLT_GUI_STATUSBAR_INDEX_NUM];
+    } statusbar;
 } jolt_gui_store;
 
 /**********************
@@ -47,12 +53,5 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
 /* Creates a loading bar object 
  * todo: probaly change the return value to a custom loading struct*/
 lv_obj_t *jolt_gui_loading_create(const char *title, lv_action_t action);
-
-#ifndef CONFIG_JOLT_GUI_STATUSBAR_H
-    #define CONFIG_JOLT_GUI_STATUSBAR_H 12
-#endif
-#ifndef CONFIG_JOLT_GUI_TITLE_W
-    #define CONFIG_JOLT_GUI_TITLE_W 70
-#endif
 
 #endif
