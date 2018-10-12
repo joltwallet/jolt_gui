@@ -24,5 +24,10 @@ lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn) {
     return LV_RES_OK;
 }
 
+lv_res_t jolt_gui_test_loading_create(lv_obj_t *list_btn) {
+
+    jolt_gui_loading_create("Loading Test", NULL);
+    return LV_RES_OK;
+}
 
 #endif

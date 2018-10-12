@@ -303,7 +303,7 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
 #if PC_SIMULATOR
     main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
             jolt_gui_pin_create);
-    lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Loading Test", jolt_gui_test_loading_create);
     lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
     lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
     lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
@@ -311,4 +311,36 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
 #endif
 
     MSG("main_menu_list: %p\n", main_menu_list);
+}
+
+lv_obj_t *jolt_gui_loading_create(const char *title, lv_action_t action) {
+    lv_obj_t *parent = jolt_gui_parent_create();
+
+    /* Create Title */
+    lv_obj_t *title_label = jolt_gui_title_create(parent, title);
+
+    /* Create Container */
+    lv_obj_t *cont = lv_cont_create(parent, NULL);
+    lv_obj_set_size(cont, LV_HOR_RES, 
+            LV_VER_RES - CONFIG_JOLT_GUI_STATUSBAR_H);
+	lv_obj_align(cont, NULL, 
+            LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
+
+    /* Create Loading Label */
+
+    /* Create Loading Bar */
+    lv_obj_t *bar = lv_bar_create(cont, NULL);
+	lv_obj_set_size(bar, 100, 20);
+	lv_obj_align(bar, NULL, LV_ALIGN_CENTER, 0, 0);
+	lv_bar_set_value(bar, 70);
+
+    lv_group_add_obj(jolt_gui_store.group.main, cont);
+    lv_group_focus_obj(cont);
+    return bar;
+}
+
+void jolt_gui_loading_action_create(lv_action_t action) {
+    /* Creates task and animation for a longer task */
+    // Create the loading screen
+    //lv_task_create(&action, 2000, LV_TASK_PRIO_LOW, NULL);
 }

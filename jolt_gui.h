@@ -44,6 +44,10 @@ bool jolt_gui_delete_current_screen();
 /* Display Text; Pressing any button returns to previous screen */
 lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
 
+/* Creates a loading bar object 
+ * todo: probaly change the return value to a custom loading struct*/
+lv_obj_t *jolt_gui_loading_create(const char *title, lv_action_t action);
+
 #ifndef CONFIG_JOLT_GUI_STATUSBAR_H
     #define CONFIG_JOLT_GUI_STATUSBAR_H 12
 #endif
