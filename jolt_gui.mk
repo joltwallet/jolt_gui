@@ -3,6 +3,7 @@ include ./jolt_gui/custom_fonts/custom_fonts.mk
 
 CSRCS += jolt_gui_entry.c
 CSRCS += jolt_gui_statusbar.c
+CSRCS += jolt_gui_loading.c
 CSRCS += jolt_gui.c
 CSRCS += lv_theme_jolt.c
 CSRCS += test_stubs.c

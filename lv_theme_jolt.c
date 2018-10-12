@@ -169,13 +169,16 @@ static void bar_init(void)
     static lv_style_t bar_indic;
 
     lv_style_copy(&bar_bg, &light_frame);
-    bar_bg.body.padding.hor = LV_DPI / 15;
-    bar_bg.body.padding.ver = LV_DPI / 15;
-    bar_bg.body.radius = 0;
+    bar_bg.body.padding.hor = 1;
+    bar_bg.body.padding.ver = 1;
+    bar_bg.body.radius = 2;
+    bar_bg.body.border.width = 2;
+    bar_bg.body.border.color = LV_COLOR_BLACK;
+    //bar_bg.body.border.part = LV_BORDER_FULL;
 
     lv_style_copy(&bar_indic, &dark_frame);
-    bar_indic.body.padding.hor = LV_DPI / 30;
-    bar_indic.body.padding.ver = LV_DPI / 30;
+    bar_indic.body.padding.hor = 1;
+    bar_indic.body.padding.ver = 5;
     bar_indic.body.radius = 0;
 
     theme.bar.bg = &bar_bg;

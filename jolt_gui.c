@@ -177,7 +177,8 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
     lv_label_set_long_mode(label, LV_LABEL_LONG_ROLL);
     lv_label_set_body_draw(label, true); // draw background
     lv_label_set_style(label, &label_style);
-    lv_obj_align(label, jolt_gui_store.statusbar.container, LV_ALIGN_IN_LEFT_MID, 2, 0);
+    lv_obj_align(label, jolt_gui_store.statusbar.container,
+            LV_ALIGN_IN_LEFT_MID, 2, 0);
     lv_label_set_text(label, title);
     lv_obj_set_size(label, CONFIG_JOLT_GUI_TITLE_W, label_style.text.font->h_px);
 
@@ -219,36 +220,4 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
 #endif
 
     MSG("main_menu_list: %p\n", main_menu_list);
-}
-
-lv_obj_t *jolt_gui_loading_create(const char *title, lv_action_t action) {
-    lv_obj_t *parent = jolt_gui_parent_create();
-
-    /* Create Title */
-    lv_obj_t *title_label = jolt_gui_title_create(parent, title);
-
-    /* Create Container */
-    lv_obj_t *cont = lv_cont_create(parent, NULL);
-    lv_obj_set_size(cont, LV_HOR_RES, 
-            LV_VER_RES - CONFIG_JOLT_GUI_STATUSBAR_H);
-	lv_obj_align(cont, NULL, 
-            LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
-
-    /* Create Loading Label */
-
-    /* Create Loading Bar */
-    lv_obj_t *bar = lv_bar_create(cont, NULL);
-	lv_obj_set_size(bar, 100, 20);
-	lv_obj_align(bar, NULL, LV_ALIGN_CENTER, 0, 0);
-	lv_bar_set_value(bar, 70);
-
-    lv_group_add_obj(jolt_gui_store.group.main, cont);
-    lv_group_focus_obj(cont);
-    return bar;
-}
-
-void jolt_gui_loading_action_create(lv_action_t action) {
-    /* Creates task and animation for a longer task */
-    // Create the loading screen
-    //lv_task_create(&action, 2000, LV_TASK_PRIO_LOW, NULL);
 }

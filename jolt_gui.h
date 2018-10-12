@@ -5,11 +5,16 @@
 #include "../lv_conf.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_statusbar.h"
+#include "test_stubs.h"
 
+#ifndef CONFIG_JOLT_GUI_LOADING_BUF_SIZE
+    #define CONFIG_JOLT_GUI_LOADING_BUF_SIZE 30
+#endif
 /**********************
  *   GLOBAL VARIABLES
  **********************/
 struct {
+    SemaphoreHandle_t mutex; // mutex for the entire gui system
     struct {
         lv_group_t *main; // Parent group for user input
         lv_group_t *back; // Group used to handle back button
@@ -24,6 +29,10 @@ struct {
         lv_obj_t *label;
         hardware_monitor_t indicators[JOLT_GUI_STATUSBAR_INDEX_NUM];
     } statusbar;
+    struct {
+        lv_obj_t *bar; 
+        lv_obj_t *label;
+    } loading; // only 1 loading bar will ever be displayed at a time
 } jolt_gui_store;
 
 /**********************
@@ -49,9 +58,5 @@ bool jolt_gui_delete_current_screen();
 
 /* Display Text; Pressing any button returns to previous screen */
 lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
-
-/* Creates a loading bar object 
- * todo: probaly change the return value to a custom loading struct*/
-lv_obj_t *jolt_gui_loading_create(const char *title, lv_action_t action);
 
 #endif
