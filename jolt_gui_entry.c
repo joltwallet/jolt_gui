@@ -33,7 +33,7 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
     MSG("roller style callback!\n");
     if(jolt_gui_store.digit.pos != 0 ) {
 	    lv_obj_align(jolt_gui_store.digit.rollers[0],
-                NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
+                NULL, LV_ALIGN_IN_LEFT_MID, jolt_gui_store.digit.offset, 0);
     }
     for(uint8_t i=0; i<CONFIG_JOLT_GUI_PIN_LEN; i++){
         uint8_t n_visible = 1;
@@ -50,7 +50,7 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
         }
         else {
 	        lv_obj_align(jolt_gui_store.digit.rollers[i], NULL,
-                    LV_ALIGN_IN_LEFT_MID, 0, 0);
+                    LV_ALIGN_IN_LEFT_MID, jolt_gui_store.digit.offset, 0);
         }
     }
     return 0;
@@ -60,7 +60,7 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
 static lv_action_t digit_entry_cb(lv_obj_t *roller) {
     /* Callback used for all digit roller except the final */
     jolt_gui_store.digit.pos++;
-    lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_NEXT);
+    //lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_NEXT);
     lv_group_focus_obj(
                 jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
     return 0;
@@ -124,10 +124,11 @@ lv_res_t jolt_gui_pin_create( void ) {
         jolt_gui_store.digit.spacing = 
                 ( lv_obj_get_width(pin_container) - 
                   CONFIG_JOLT_GUI_PIN_LEN*roller_width ) / 
-                ( CONFIG_JOLT_GUI_PIN_LEN + 2 );
+                ( CONFIG_JOLT_GUI_PIN_LEN );
+        jolt_gui_store.digit.offset = (lv_obj_get_width(pin_container) - (CONFIG_JOLT_GUI_PIN_LEN * (jolt_gui_store.digit.spacing+roller_width))) / 2;
     }
 	lv_obj_align(jolt_gui_store.digit.rollers[0], NULL,
-            LV_ALIGN_IN_LEFT_MID, 0, jolt_gui_store.digit.spacing);
+            LV_ALIGN_IN_LEFT_MID, 0, jolt_gui_store.digit.offset);
 
     for( uint8_t i=1; i<CONFIG_JOLT_GUI_PIN_LEN; i++ ) {
         jolt_gui_store.digit.rollers[i] = lv_roller_create(pin_container, jolt_gui_store.digit.rollers[0]);

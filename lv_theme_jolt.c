@@ -35,8 +35,6 @@ static lv_style_t dark_plain;
 static lv_style_t light_frame;
 static lv_style_t dark_frame;
 
-static lv_style_t no_frame;
-
 /*Saved input parameters*/
 static uint16_t _hue;
 static lv_font_t * _font;
@@ -56,13 +54,13 @@ static void basic_init(void)
     def.body.grad_color = LV_COLOR_WHITE;
     def.body.radius = 0;
     def.body.opa = LV_OPA_COVER;
-    def.body.padding.hor = 3;
-    def.body.padding.ver = 3;
+    def.body.padding.hor = 2;
+    def.body.padding.ver = 2;
     def.body.padding.inner = 1;
     def.body.border.color = LV_COLOR_WHITE;
     def.body.border.width = 1;
     def.body.border.opa = LV_OPA_COVER;
-    def.body.border.part = LV_BORDER_FULL;
+    def.body.border.part = 0;
 
     def.text.font = _font;
     def.text.color = LV_COLOR_BLACK;
@@ -77,14 +75,13 @@ static void basic_init(void)
     def.image.intense = LV_OPA_TRANSP;
     def.image.opa = LV_OPA_COVER;
 
-    lv_style_copy(&light_plain, &def);
-    light_plain.body.padding.ver = 1; // Make the elements only 1 pixel vertical padding while not selected
+    lv_style_copy(&light_plain, &def); // White background, dark borders
+    //light_plain.body.padding.ver = 1; // Make the elements only 1 pixel vertical padding while not selected
 
     lv_style_copy(&light_frame, &light_plain);
-    light_frame.body.radius = 0;
-
-    lv_style_copy(&no_frame, &light_frame);
-    no_frame.body.border.part = 0;
+    light_frame.body.border.color = LV_COLOR_BLACK;
+    light_frame.body.border.part = LV_BORDER_FULL;
+    light_frame.body.radius = 2;
 
     lv_style_copy(&dark_plain, &light_plain);
     dark_plain.body.main_color   = LV_COLOR_BLACK;
@@ -95,10 +92,11 @@ static void basic_init(void)
     dark_plain.image.color       = LV_COLOR_WHITE;
 
     lv_style_copy(&dark_frame, &dark_plain);
-    dark_frame.body.radius = 0;
+    dark_frame.body.border.part = LV_BORDER_FULL;
+    dark_frame.body.radius = 2;
 
     lv_style_copy(&scrollbar_style, &dark_frame);
-    scrollbar_style.body.padding.hor = 0; // Distance from the Right 
+    scrollbar_style.body.padding.hor = 0; // Scrollbar distance from the Right 
     scrollbar_style.body.padding.inner = 4; // Scrollbar's Width 
 
     theme.bg = &def;
@@ -165,24 +163,8 @@ static void led_init(void)
 static void bar_init(void)
 {
 #if USE_LV_BAR
-    static lv_style_t bar_bg;
-    static lv_style_t bar_indic;
-
-    lv_style_copy(&bar_bg, &light_frame);
-    bar_bg.body.padding.hor = 1;
-    bar_bg.body.padding.ver = 1;
-    bar_bg.body.radius = 2;
-    bar_bg.body.border.width = 2;
-    bar_bg.body.border.color = LV_COLOR_BLACK;
-    //bar_bg.body.border.part = LV_BORDER_FULL;
-
-    lv_style_copy(&bar_indic, &dark_frame);
-    bar_indic.body.padding.hor = 1;
-    bar_indic.body.padding.ver = 5;
-    bar_indic.body.radius = 0;
-
-    theme.bar.bg = &bar_bg;
-    theme.bar.indic = &bar_indic;
+    theme.bar.bg = &light_frame;
+    theme.bar.indic = &dark_frame;
 #endif
 }
 
@@ -204,8 +186,6 @@ static void slider_init(void)
 static void sw_init(void)
 {
 #if USE_LV_SW != 0
-
-
     theme.sw.bg = theme.slider.bg;
     theme.sw.indic = theme.slider.indic;
     theme.sw.knob_off = theme.slider.knob;
@@ -267,8 +247,6 @@ static void calendar_init(void)
 static void cb_init(void)
 {
 #if USE_LV_CB != 0
-
-
     theme.cb.bg = &lv_style_transp;
     theme.cb.box.rel = &light_frame;
     theme.cb.box.pr = &dark_frame;
@@ -282,8 +260,6 @@ static void cb_init(void)
 static void btnm_init(void)
 {
 #if USE_LV_BTNM
-
-
     theme.btnm.bg = &light_frame;
     theme.btnm.btn.rel = &light_frame;
     theme.btnm.btn.pr = &dark_frame;
@@ -318,8 +294,8 @@ static void mbox_init(void)
 static void page_init(void)
 {
 #if USE_LV_PAGE
-    theme.page.bg = &light_frame;
-    theme.page.scrl = &light_frame;
+    theme.page.bg = &light_plain;
+    theme.page.scrl = &light_plain;
     theme.page.sb = &scrollbar_style;
 #endif
 }
@@ -338,11 +314,13 @@ static void list_init(void)
 {
 #if USE_LV_LIST != 0
     static lv_style_t scrl;
-    lv_style_copy(&scrl, &lv_style_transp_fit);
-    scrl.body.padding.inner = 1; // Make the elements only 1 pixel vertical padding while not selected
+    lv_style_copy(&scrl, &light_plain);
+    scrl.body.padding.ver = 1; // V padding whole list
+    scrl.body.padding.hor = 1; // H padding whole list
+    scrl.body.padding.inner = 1; // Space between list elements
 
     theme.list.sb = &scrollbar_style;
-    theme.list.bg = &no_frame;
+    theme.list.bg = &light_plain;
     theme.list.scrl = &scrl;
     theme.list.btn.rel = &light_plain;
     theme.list.btn.pr = &dark_plain;
@@ -369,15 +347,12 @@ static void roller_init(void)
 #if USE_LV_ROLLER != 0
     static lv_style_t bg;
     lv_style_copy(&bg, &light_frame);
-    bg.body.padding.hor=2; // Width of the roller
-    bg.text.line_space = 0; // Distance between options
-    bg.text.font = &lv_font_dejavu_20;
-    theme.roller.bg = &bg;
+    bg.body.padding.hor = 2; // Width Padding of the entire roller
+    bg.text.font = &crox3hb;
+    bg.text.line_space = 1; // Distance between options... sort of
 
-    static lv_style_t sel;
-    lv_style_copy(&sel, &dark_frame);
-    sel.body.padding.ver=10;
-    theme.roller.sel = &sel;
+    theme.roller.bg = &bg;
+    theme.roller.sel = &dark_frame;
 #endif
 }
 

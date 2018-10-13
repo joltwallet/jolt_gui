@@ -170,7 +170,7 @@ lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
     label_style.body.main_color = LV_COLOR_WHITE;
     label_style.body.padding.ver = 0;
     label_style.body.padding.inner = 0;
-    label_style.text.font = &lv_font_monospace_8; // todo: better looking font
+    label_style.text.font = &lv_font_monospace_8;
     label_style.body.border.opa = LV_OPA_TRANSP;
     label_style.body.border.part = 0;
 
@@ -213,7 +213,7 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
             jolt_gui_pin_create);
     lv_list_add(main_menu_list, NULL, "Loading Test", jolt_gui_test_loading_create);
-    lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Alphabet", jolt_gui_test_alphabet_create);
     lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
     lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
     lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);

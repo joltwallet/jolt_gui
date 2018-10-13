@@ -8,6 +8,9 @@
  * Tests for word wrapping and scrolling. */
 lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn);
 
+/* View characters of font */
+lv_res_t jolt_gui_test_alphabet_create(lv_obj_t * list_btn);
+
 /* Tests Submenuing system */
 lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn);
 

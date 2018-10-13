@@ -18,6 +18,18 @@ lv_res_t jolt_gui_test_text_create(lv_obj_t * list_btn) {
     return LV_RES_OK;
 }
 
+lv_res_t jolt_gui_test_alphabet_create(lv_obj_t * list_btn) {
+    /* Dummy Text Page for Testing */
+    jolt_gui_text_create("Alphabet", 
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
+            "abcdefghijklmnopqrstuvwxyz "
+            "1234567890 "
+            "!@#$%^&*()-+_="
+            "{}[];':\",.<>?/\\"
+            );
+    return LV_RES_OK;
+}
+
 
 lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn) {
     /*Create the list*/
@@ -39,10 +51,10 @@ lv_res_t jolt_gui_test_loading_create(lv_obj_t *list_btn) {
 static lv_action_t loading_action() {
     static uint8_t i = 0;
     switch(i) {
-        case 0:
+        case 10:
             jolt_gui_loading_update(i, "Contacting Server");
             break;
-        case 20:
+        case 30:
             jolt_gui_loading_update(i, "Checking Account");
             break;
         case 40:
@@ -54,12 +66,12 @@ static lv_action_t loading_action() {
         case 60:
             jolt_gui_loading_update(i, "Broadcasting");
             break;
-        case 90:
+        case 100:
             jolt_gui_loading_update(i, "Complete!");
             break;
     }
     i += 10;
-    if( 100 == i ) {
+    if( 110 == i ) {
         lv_task_del(loading);
     }
 }

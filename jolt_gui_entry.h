@@ -13,7 +13,7 @@ void jolt_gui_back_callback();
 lv_res_t jolt_gui_pin_create( void ); 
 
 #ifndef CONFIG_JOLT_GUI_ANIM_DIGIT_MS
-    #define CONFIG_JOLT_GUI_ANIM_DIGIT_MS 70
+    #define CONFIG_JOLT_GUI_ANIM_DIGIT_MS 90
 #endif
 #ifndef CONFIG_JOLT_GUI_PIN_LEN
     #define CONFIG_JOLT_GUI_PIN_LEN 8

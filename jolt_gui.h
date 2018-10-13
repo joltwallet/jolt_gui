@@ -22,7 +22,8 @@ struct {
     struct {
         lv_obj_t *rollers[CONFIG_JOLT_GUI_PIN_LEN];
         int8_t pos; // Dictates function of back button
-        uint8_t spacing;
+        uint8_t spacing; // Distance between rollers
+        uint8_t offset; // Distance between first roller and left screen
     } digit;
     struct {
         lv_obj_t *container;
