@@ -214,7 +214,9 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
             jolt_gui_test_pin_create);
     lv_list_add(main_menu_list, NULL, "Loading Test", jolt_gui_test_loading_create);
     lv_list_add(main_menu_list, NULL, "Alphabet", jolt_gui_test_alphabet_create);
-    lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);
+    lv_list_add(main_menu_list, NULL, "Numeric Begin", jolt_gui_test_numeric_begin_dp_create);
+    lv_list_add(main_menu_list, NULL, "Numeric End", jolt_gui_test_numeric_end_dp_create);
+    lv_list_add(main_menu_list, NULL, "Numeric Mid", jolt_gui_test_numeric_mid_dp_create);
     lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
     lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);
 #endif

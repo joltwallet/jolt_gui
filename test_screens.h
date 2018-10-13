@@ -17,6 +17,11 @@ lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn);
 /* Test PIN Entry */
 lv_res_t jolt_gui_test_pin_create( void );
 
+/* Test Numeric Entry and Decimal Points */
+lv_res_t jolt_gui_test_numeric_end_dp_create( void );
+lv_res_t jolt_gui_test_numeric_begin_dp_create( void );
+lv_res_t jolt_gui_test_numeric_mid_dp_create( void );
+
 /* Test Loading Animations on a task */
 lv_res_t jolt_gui_test_loading_create(lv_obj_t *list_btn);
 

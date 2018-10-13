@@ -35,7 +35,7 @@ static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
 	    lv_obj_align(jolt_gui_store.digit.rollers[0],
                 NULL, LV_ALIGN_IN_LEFT_MID, jolt_gui_store.digit.offset, 0);
     }
-    for(uint8_t i=0; i<CONFIG_JOLT_GUI_PIN_LEN; i++){
+    for(uint8_t i=0; i<jolt_gui_store.digit.n; i++){
         uint8_t n_visible = 1;
         if( i == jolt_gui_store.digit.pos ) {
             n_visible = 3;
@@ -87,6 +87,9 @@ static lv_obj_t *digit_create(lv_obj_t *parent) {
 
 lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
         lv_action_t cb ) { 
+    jolt_gui_store.digit.decimal = decimal;
+    jolt_gui_store.digit.n = n;
+
     lv_obj_t *parent = jolt_gui_parent_create();
 
     /* Create container to hold all rollers */
@@ -98,18 +101,28 @@ lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
 
     jolt_gui_store.digit.rollers[0] = digit_create(cont);
 
+    /* Create decimal point obj so its behind rollers */
+    lv_obj_t *dp;
+    if( jolt_gui_store.digit.decimal >= 0 ) {
+        dp = lv_label_create(cont, NULL);
+    }
+
     /* Compute Roller Spacing */
     {
         uint8_t roller_width = lv_obj_get_width(jolt_gui_store.digit.rollers[0]);
         jolt_gui_store.digit.spacing = 
             ( lv_obj_get_width(cont) - n*roller_width ) / n;
         jolt_gui_store.digit.offset = ( lv_obj_get_width(cont) - 
-                (n * (jolt_gui_store.digit.spacing+roller_width)) ) / 2;
+                (n-1) * jolt_gui_store.digit.spacing -
+                n * roller_width ) / 2;
+        printf("offset: %d\n", jolt_gui_store.digit.offset);
+        printf("spacing: %d\n", jolt_gui_store.digit.spacing);
+        printf("width: %d\n", roller_width);
     }
 
     /* Align first roller relative to container by offset */
 	lv_obj_align(jolt_gui_store.digit.rollers[0], NULL,
-            LV_ALIGN_IN_LEFT_MID, 0, jolt_gui_store.digit.offset);
+            LV_ALIGN_IN_LEFT_MID, jolt_gui_store.digit.offset, 0);
 
     /* Create and align the remaining rollers */
     for( uint8_t i=1; i<n; i++ ) {
@@ -119,6 +132,21 @@ lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
 	    lv_obj_align(jolt_gui_store.digit.rollers[i],
                 jolt_gui_store.digit.rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
                 jolt_gui_store.digit.spacing, 0);
+    }
+
+    /* Configure decimal point */
+    if( jolt_gui_store.digit.decimal >= 0 ) {
+        lv_label_set_style(dp, lv_roller_get_style(jolt_gui_store.digit.rollers[0], LV_ROLLER_STYLE_BG));
+        lv_label_set_static_text(dp, ".");
+        if( jolt_gui_store.digit.decimal == n) {
+            lv_obj_align(dp, jolt_gui_store.digit.rollers[0],
+                    LV_ALIGN_OUT_LEFT_MID, 0,0);
+        }
+        else {
+            lv_obj_align(dp, jolt_gui_store.digit.rollers[
+                    n-jolt_gui_store.digit.decimal-1],
+                    LV_ALIGN_OUT_RIGHT_MID, 0,0);
+        }
     }
 
     /* Setup Callback on last roller */

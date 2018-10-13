@@ -67,6 +67,19 @@ lv_res_t jolt_gui_test_pin_create( void ) {
      return LV_RES_OK;
 }
 
+lv_res_t jolt_gui_test_numeric_end_dp_create( void ) {
+     jolt_gui_numeric_create( 5, 0, "Decimal End", NULL); 
+     return LV_RES_OK;
+}
+lv_res_t jolt_gui_test_numeric_begin_dp_create( void ) {
+     jolt_gui_numeric_create( 4, 4, "Decimal Begin", NULL); 
+     return LV_RES_OK;
+}
+lv_res_t jolt_gui_test_numeric_mid_dp_create( void ) {
+     jolt_gui_numeric_create( 6, 2, "Decimal 2", NULL); 
+     return LV_RES_OK;
+}
+
 lv_res_t jolt_gui_test_loading_create(lv_obj_t *list_btn) {
     jolt_gui_loading_create("Loading Test");
     loading = lv_task_create(loading_action, 500, LV_TASK_PRIO_HIGH, NULL);
