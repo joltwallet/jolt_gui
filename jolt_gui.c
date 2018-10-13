@@ -211,7 +211,7 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     /*Create the list*/
 #if PC_SIMULATOR
     main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
-            jolt_gui_pin_create);
+            jolt_gui_test_pin_create);
     lv_list_add(main_menu_list, NULL, "Loading Test", jolt_gui_test_loading_create);
     lv_list_add(main_menu_list, NULL, "Alphabet", jolt_gui_test_alphabet_create);
     lv_list_add(main_menu_list, NULL, "Dummy", list_release_action);

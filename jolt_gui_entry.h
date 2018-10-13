@@ -10,7 +10,15 @@ void jolt_gui_create(lv_indev_t *kp_indev);
 #define JOLT_GUI_BACK // Used to close window, or go to the left during entry
 void jolt_gui_back_callback();
 
-lv_res_t jolt_gui_pin_create( void ); 
+//lv_res_t jolt_gui_pin_create( void ); 
+
+/* Creates a numeric entry form with "n" digits and a decimal-point "decimal"
+ * digits from the right. If decimal is negative, then no decimal will show.
+ * Callback gets called after final roller entry.*/
+#define JOLT_GUI_NO_DECIMAL -1
+lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
+        lv_action_t cb ); 
+
 
 #ifndef CONFIG_JOLT_GUI_ANIM_DIGIT_MS
     #define CONFIG_JOLT_GUI_ANIM_DIGIT_MS 90

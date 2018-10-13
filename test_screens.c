@@ -42,6 +42,31 @@ lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn) {
     return LV_RES_OK;
 }
 
+static lv_action_t pin_entry_cb(lv_obj_t roller) {
+    uint8_t pin_array[CONFIG_JOLT_GUI_PIN_LEN] = { 0 };
+    // Parse and zero out the pin array
+    printf("Entered PIN: ");
+    for(uint8_t i=0; i < sizeof(pin_array); i++) {
+        pin_array[i] = 9 - (lv_roller_get_selected(jolt_gui_store.digit.rollers[i]) % 10);
+        //todo: securely zero out the rollers
+        //pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]);
+        printf("%d ", pin_array[i]);
+    }
+    printf("\n");
+
+    jolt_gui_delete_current_screen();
+
+    // todo: call the caller callback
+
+    return 0;
+}
+
+lv_res_t jolt_gui_test_pin_create( void ) {
+     jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN, JOLT_GUI_NO_DECIMAL,
+             "PIN (1/10)", pin_entry_cb); 
+     return LV_RES_OK;
+}
+
 lv_res_t jolt_gui_test_loading_create(lv_obj_t *list_btn) {
     jolt_gui_loading_create("Loading Test");
     loading = lv_task_create(loading_action, 500, LV_TASK_PRIO_HIGH, NULL);
