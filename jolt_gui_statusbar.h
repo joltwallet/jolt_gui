@@ -1,7 +1,7 @@
 #ifndef __JOLT_GUI_STATUSBAR_H__
 #define __JOLT_GUI_STATUSBAR_H__
 
-#include "../../lv_conf.h"
+#include "../lv_conf.h"
 #include "test_stubs.h"
 
 enum {

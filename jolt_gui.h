@@ -5,7 +5,17 @@
 #include "../lv_conf.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_statusbar.h"
-#include "test_stubs.h"
+
+#if PC_SIMULATOR
+    #include "test_stubs.h"
+    #include "test_screens.h"
+#elif ESP_PLATFORM
+    #include "freertos/FreeRTOS.h"
+    #include "freertos/queue.h"
+    #include "freertos/task.h"
+    #include "freertos/semphr.h"
+#endif
+
 
 #ifndef CONFIG_JOLT_GUI_LOADING_BUF_SIZE
     #define CONFIG_JOLT_GUI_LOADING_BUF_SIZE 30
@@ -13,6 +23,12 @@
 /**********************
  *   GLOBAL VARIABLES
  **********************/
+/* To be defined in JoltOS */
+typedef struct hardware_monitor_t {
+    uint8_t val;
+    void (*update)(struct hardware_monitor_t *); // function to call to update val
+} hardware_monitor_t;
+
 struct {
     SemaphoreHandle_t mutex; // mutex for the entire gui system
     struct {
@@ -41,8 +57,13 @@ struct {
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+
+/* Run before running jolt_gui_create();
+ * Creates all the groups and registers the in-device to the groups */
+void jolt_gui_group_create();
+
 /* Creates the Jolt GUI */
-void jolt_gui_create(lv_indev_t *kp_indev);
+void jolt_gui_create();
 
 /* Creates a title in the top left statusbar. 
  * Allocates and copies the title string. */

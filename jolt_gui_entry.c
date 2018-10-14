@@ -102,7 +102,7 @@ lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
     jolt_gui_store.digit.rollers[0] = digit_create(cont);
 
     /* Create decimal point obj so its behind rollers */
-    lv_obj_t *dp;
+    lv_obj_t *dp = NULL;
     if( jolt_gui_store.digit.decimal >= 0 ) {
         dp = lv_label_create(cont, NULL);
     }

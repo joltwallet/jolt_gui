@@ -2,6 +2,7 @@
 #ifndef __JOLT_GUI_TEST_STUBS_H__
 #define __JOLT_GUI_TEST_STUBS_H__
 #include "../lvgl/lvgl.h"
+#include "jolt_gui.h"
 
 /* Define some FreeRTOS variables */
 typedef void* SemaphoreHandle_t;
@@ -12,11 +13,6 @@ SemaphoreHandle_t xSemaphoreCreateMutex( void );
 BaseType_t xSemaphoreTake( SemaphoreHandle_t xSemaphore, TickType_t xTicksToWait );
 BaseType_t xSemaphoreGive( SemaphoreHandle_t xSemaphore );
 
-/* To be defined in JoltOS */
-typedef struct hardware_monitor_t {
-    uint8_t val;
-    void (*update)(struct hardware_monitor_t *); // function to call to update val
-} hardware_monitor_t;
 
 /* *********************************************
  * StatusBar Hardware Monitor Update Functions *

@@ -5,13 +5,6 @@
 #include "jolt_gui_symbols.h"
 #include "jolt_gui_statusbar.h"
 
-#if PC_SIMULATOR
-    #include "test_stubs.h"
-    #include "test_screens.h"
-#elif ESP_PLATFORM
-    //todo include required jolt libraries here
-#endif
-
 /*********************
  *      DEFINES
  *********************/
@@ -37,7 +30,7 @@ static lv_obj_t *main_menu_list;
     #define MSG(...) printf(__VA_ARGS__)
 #elif ESP_PLATFORM
     #include "esp_log.h"
-    static const char TAG[] = "jolt_gui"
+    static const char TAG[] = "jolt_gui";
     #define MSG(...) ESP_LOGI(TAG, __VA_ARGS__)
 #else
     #define MSG(...) printf(__VA_ARGS__)
@@ -189,16 +182,17 @@ static void group_mod_cb(lv_style_t *style) {
     style->body.border.part = 0;
 }
 
-void jolt_gui_create(lv_indev_t *kp_indev) {
-    /* Set Jolt ssd1306 theme */
-    lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
-    lv_theme_set_current(th);  
-
+void jolt_gui_group_create() {
     /* Create Groups for user input */
     jolt_gui_store.group.main = lv_group_create();
     jolt_gui_store.group.back = lv_group_create();
-    lv_indev_set_group(kp_indev, jolt_gui_store.group.main);
     lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
+}
+
+void jolt_gui_create() {
+    /* Set Jolt ssd1306 theme */
+    lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
+    lv_theme_set_current(th);  
 
     // Don't need to set group since indev driver sends direct keypresses
     lv_obj_t *btn_back = lv_btn_create(lv_scr_act(), NULL);
@@ -219,6 +213,17 @@ void jolt_gui_create(lv_indev_t *kp_indev) {
     lv_list_add(main_menu_list, NULL, "Numeric Mid", jolt_gui_test_numeric_mid_dp_create);
     lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
     lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);
+#elif ESP_PLATFORM
+    main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
+            NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 0", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 1", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 2", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 3", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 4", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 5", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 6", NULL);
+    lv_list_add(main_menu_list, NULL, "Dummy 7", NULL);
 #endif
 
     MSG("main_menu_list: %p\n", main_menu_list);

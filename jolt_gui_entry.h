@@ -3,9 +3,8 @@
 
 #include <stddef.h>
 #include "../lvgl/lvgl.h"
-//#include "jolt_gui.h"
+#include "jolt_gui.h"
 
-void jolt_gui_create(lv_indev_t *kp_indev);
 
 #define JOLT_GUI_BACK // Used to close window, or go to the left during entry
 void jolt_gui_back_callback();
