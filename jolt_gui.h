@@ -1,10 +1,12 @@
 #ifndef __JOLT_LVGL_GUI_H__
 #define __JOLT_LVGL_GUI_H__
 
-#include "../lvgl/lvgl.h"
-#include "../lv_conf.h"
+#include "lvgl.h"
+#include "lv_conf.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_statusbar.h"
+#include "jolt_gui_symbols.h"
+#include "jolt_gui_first_boot.h"
 
 #if PC_SIMULATOR
     #include "test_stubs.h"
@@ -30,6 +32,7 @@ typedef struct hardware_monitor_t {
 } hardware_monitor_t;
 
 struct {
+    bool first_boot;
     SemaphoreHandle_t mutex; // mutex for the entire gui system
     struct {
         lv_group_t *main; // Parent group for user input
@@ -82,5 +85,9 @@ bool jolt_gui_delete_current_screen();
 
 /* Display Text; Pressing any button returns to previous screen */
 lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
+
+/* Calls cb whenever the back button is pressed */
+lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb);
+lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb);
 
 #endif

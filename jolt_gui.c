@@ -214,17 +214,47 @@ void jolt_gui_create() {
     lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
     lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);
 #elif ESP_PLATFORM
-    main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
-            NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 0", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 1", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 2", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 3", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 4", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 5", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 6", NULL);
-    lv_list_add(main_menu_list, NULL, "Dummy 7", NULL);
+    if( jolt_gui_store.first_boot ) {
+        jolt_gui_first_boot_create();
+    }
+    else {
+        main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
+                NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 0", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 1", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 2", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 3", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 4", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 5", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 6", NULL);
+        lv_list_add(main_menu_list, NULL, "Dummy 7", NULL);
+    }
 #endif
 
     MSG("main_menu_list: %p\n", main_menu_list);
 }
+
+lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb) {
+    if( NULL == parent ) {
+        parent = lv_scr_act();
+    }
+    lv_obj_t *btn_back = lv_btn_create(parent, NULL);
+    lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, cb);
+    lv_obj_set_size(btn_back, 0,0);
+    lv_group_add_obj(jolt_gui_store.group.back, btn_back);
+    lv_group_focus_obj(btn_back);
+    return btn_back;
+}
+
+lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
+    if( NULL == parent ) {
+        parent = lv_scr_act();
+    }
+    lv_obj_t *btn = lv_btn_create(parent, NULL);
+    lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, cb);
+    lv_obj_set_size(btn, 0,0);
+    lv_group_add_obj(jolt_gui_store.group.main, btn);
+    lv_group_focus_obj(btn);
+    return btn;
+}
+
