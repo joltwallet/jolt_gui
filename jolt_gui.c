@@ -230,8 +230,6 @@ void jolt_gui_create() {
         lv_list_add(main_menu_list, NULL, "Dummy 7", NULL);
     }
 #endif
-
-    MSG("main_menu_list: %p\n", main_menu_list);
 }
 
 lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb) {
