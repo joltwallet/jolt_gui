@@ -5,6 +5,8 @@
 #include "esp_log.h"
 #include "jolttypes.h"
 
+#include "esp_heap_caps.h" // remove after debug
+
 #if CONFIG_JOLT_STORE_ATAES132A
 #include "aes132_cmd.h"
 #endif
@@ -12,8 +14,8 @@
 #define MNEMONIC_STRENGTH 256
 
 static uint8_t scr_idx = 0;
-static lv_action_t next_screen(lv_obj_t *btn);
-static lv_action_t prev_screen(lv_obj_t *btn);
+static lv_action_t screen_next(lv_obj_t *btn);
+static lv_action_t screen_prev(lv_obj_t *btn);
 
 static const char TAG[] = "first_boot";
 static CONFIDENTIAL uint256_t mnemonic_bin;
@@ -57,12 +59,39 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
     return E_FAILURE;
 }
 
+static lv_action_t pin_entry_cb(lv_obj_t roller) {
+    uint8_t pin_array[CONFIG_JOLT_GUI_PIN_LEN] = { 0 };
+    // Parse and zero out the pin array
+    printf("Entered PIN: ");
+    for(uint8_t i=0; i < sizeof(pin_array); i++) {
+        pin_array[i] = 9 - (lv_roller_get_selected(jolt_gui_store.digit.rollers[i]) % 10);
+        //todo: securely zero out the rollers
+        //pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]);
+        printf("%d ", pin_array[i]);
+    }
+    printf("\n");
+
+    //jolt_gui_delete_current_screen();
+
+    // todo: call the caller callback
+
+    return 0;
+}
+
+static lv_action_t screen_pin_create(lv_obj_t *btn) {
+    printf("woof\n");
+    jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN, JOLT_GUI_NO_DECIMAL,
+             "PIN Setup", pin_entry_cb); 
+    return 0;
+}
+
 static void screen_create() {
     static lv_obj_t *current_screen = NULL;
     if( NULL != current_screen ) {
         // todo: securely delete the mnemonic list lv_obj_t
-        lv_obj_del(current_screen);
-        current_screen = NULL;
+        // todo: delete stuff, but littlevgl is corrupting heap when deleting
+        //lv_obj_del(current_screen);
+        //current_screen = NULL;
     }
 
     switch( scr_idx ) {
@@ -71,7 +100,7 @@ static void screen_create() {
                     "Welcome to Jolt, "
                     "please backup the following secret mnemonic.");
             jolt_gui_set_back_action(current_screen, NULL);
-            jolt_gui_set_enter_action(current_screen, &next_screen);
+            jolt_gui_set_enter_action(current_screen, &screen_next);
             break;
         }
         case(1):{
@@ -82,25 +111,28 @@ static void screen_create() {
                 if( i == 0 ) {
                     current_screen = jolt_gui_menu_create(title, NULL, 
                             buf, NULL);
+                    lv_list_add(current_screen, NULL, "continue", &screen_pin_create); //debug
                 }
                 else {
                     lv_list_add(current_screen, NULL, buf, NULL);
                 }
             }
-            lv_list_add(current_screen, NULL, "continue", NULL);
-            jolt_gui_set_back_action(current_screen, &prev_screen);
+            //jolt_gui_set_back_action(current_screen, &screen_prev);
+            jolt_gui_set_back_action(NULL, &screen_prev);
             break;
         }
     }
+    heap_caps_check_integrity_all(true);
 }
 
-static lv_action_t next_screen(lv_obj_t *btn) {
+static lv_action_t screen_next(lv_obj_t *btn) {
+    printf("boop2\n");
     scr_idx++;
     screen_create();
     return 0;
 }
 
-static lv_action_t prev_screen(lv_obj_t *btn) {
+static lv_action_t screen_prev(lv_obj_t *btn) {
     if( scr_idx > 0 ) {
         scr_idx--;
         screen_create();

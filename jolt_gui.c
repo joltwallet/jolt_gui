@@ -115,6 +115,8 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
 
     /* Create and Stylize Statusbar Title */
     jolt_gui_title_create(parent, title);
+
+    jolt_gui_set_enter_action(parent, jolt_gui_fwd_main);
     return menu;
 }
 
@@ -186,7 +188,31 @@ void jolt_gui_group_create() {
     /* Create Groups for user input */
     jolt_gui_store.group.main = lv_group_create();
     jolt_gui_store.group.back = lv_group_create();
+    jolt_gui_store.group.enter = lv_group_create();
     lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
+}
+static lv_action_t woof(lv_obj_t btn) {
+    printf("woof\n");
+    return 0;
+}
+
+// todo delete this
+static lv_res_t list_release_action(lv_obj_t * list_btn) {
+    /* PLACEHOLDER STUB*/
+    printf("List element click:%s\n", lv_list_get_btn_text(list_btn));
+    return LV_RES_OK; /*Return OK because the list is not deleted*/
+}
+
+// todo delete this
+static lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn) {
+    /*Create the list*/
+    lv_obj_t *settings_list = jolt_gui_menu_create("Settings",
+            NULL, "WiFi", list_release_action);
+    lv_list_add(settings_list, NULL, "Bluetooth", list_release_action);
+    lv_list_add(settings_list, NULL, "Long Option Name Scrolls",
+            list_release_action);
+    lv_list_add(settings_list, NULL, "Factory Reset", list_release_action);
+    return LV_RES_OK;
 }
 
 void jolt_gui_create() {
@@ -214,13 +240,12 @@ void jolt_gui_create() {
     lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
     lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);
 #elif ESP_PLATFORM
-    if( jolt_gui_store.first_boot ) {
+    if( true && jolt_gui_store.first_boot ) {
         jolt_gui_first_boot_create();
     }
     else {
-        main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
-                NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 0", NULL);
+        main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry", woof);
+        lv_list_add(main_menu_list, NULL, "submenu", jolt_gui_test_submenu_create);
         lv_list_add(main_menu_list, NULL, "Dummy 1", NULL);
         lv_list_add(main_menu_list, NULL, "Dummy 2", NULL);
         lv_list_add(main_menu_list, NULL, "Dummy 3", NULL);
@@ -236,12 +261,13 @@ lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb) {
     if( NULL == parent ) {
         parent = lv_scr_act();
     }
-    lv_obj_t *btn_back = lv_btn_create(parent, NULL);
-    lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, cb);
-    lv_obj_set_size(btn_back, 0,0);
-    lv_group_add_obj(jolt_gui_store.group.back, btn_back);
-    lv_group_focus_obj(btn_back);
-    return btn_back;
+    lv_obj_t *btn = lv_btn_create(parent, NULL);
+    lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, cb);
+    lv_obj_set_size(btn, 0, 0);
+    lv_group_remove_obj(btn);
+    lv_group_add_obj(jolt_gui_store.group.back, btn);
+    lv_group_focus_obj(btn);
+    return btn;
 }
 
 lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
@@ -250,9 +276,15 @@ lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
     }
     lv_obj_t *btn = lv_btn_create(parent, NULL);
     lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, cb);
-    lv_obj_set_size(btn, 0,0);
-    lv_group_add_obj(jolt_gui_store.group.main, btn);
+    lv_obj_set_size(btn, 0, 0);
+    lv_group_remove_obj(btn);
+    lv_group_add_obj(jolt_gui_store.group.enter, btn);
     lv_group_focus_obj(btn);
     return btn;
 }
 
+lv_action_t jolt_gui_fwd_main(lv_obj_t *btn) {
+    printf("boop\n");
+    lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_ENTER);
+    return 0;
+}

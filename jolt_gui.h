@@ -37,6 +37,7 @@ struct {
     struct {
         lv_group_t *main; // Parent group for user input
         lv_group_t *back; // Group used to handle back button
+        lv_group_t *enter;
     } group;
     struct {
         lv_obj_t *rollers[CONFIG_JOLT_GUI_NUMERIC_LEN];
@@ -89,5 +90,6 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
 /* Calls cb whenever the back button is pressed */
 lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb);
 lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb);
+lv_action_t jolt_gui_fwd_main(lv_obj_t *btn);
 
 #endif
