@@ -13,6 +13,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static lv_action_t back_cb(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
@@ -87,6 +88,7 @@ static lv_obj_t *digit_create(lv_obj_t *parent) {
 
 lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
         lv_action_t cb ) { 
+
     jolt_gui_store.digit.decimal = decimal;
     jolt_gui_store.digit.n = n;
 
@@ -164,7 +166,28 @@ lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
     /* Create Title Label */
     jolt_gui_title_create(parent, title);
 
+    jolt_gui_set_back_action(parent, &back_cb);
+
     return parent;
 }
 
+static lv_action_t back_cb(lv_obj_t *btn) {
+    if( jolt_gui_store.digit.pos <= 0 ) {
+        /* Close the current container */
+        jolt_gui_delete_current_screen();
+    }
+    else {
+        /* Preserve the currently selected roller value */
+        lv_roller_ext_t *ext = lv_obj_get_ext_attr(
+                jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
+        ext->ddlist.sel_opt_id_ori = ext->ddlist.sel_opt_id;
 
+        /* Decrement position and refocus */
+        jolt_gui_store.digit.pos--;
+        MSG("Decrementing jolt_gui_store.digit.pos to %d\n",
+                jolt_gui_store.digit.pos);
+        lv_group_focus_obj(jolt_gui_store.digit.rollers[
+                jolt_gui_store.digit.pos]);
+    }
+    return 0;
+}

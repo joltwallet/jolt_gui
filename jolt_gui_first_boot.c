@@ -5,7 +5,7 @@
 #include "esp_log.h"
 #include "jolttypes.h"
 
-#include "esp_heap_caps.h" // remove after debug
+#include "sodium.h"
 
 #if CONFIG_JOLT_STORE_ATAES132A
 #include "aes132_cmd.h"
@@ -20,6 +20,7 @@ static lv_action_t screen_prev(lv_obj_t *btn);
 static const char TAG[] = "first_boot";
 static CONFIDENTIAL uint256_t mnemonic_bin;
 static CONFIDENTIAL char mnemonic[BM_MNEMONIC_BUF_LEN];
+static CONFIDENTIAL uint256_t pin_hash;
 
 static jolt_err_t get_nth_word(char buf[], size_t buf_len,
         const char *str, const uint32_t n){
@@ -59,7 +60,8 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
     return E_FAILURE;
 }
 
-static lv_action_t pin_entry_cb(lv_obj_t roller) {
+/* Collects the information on the rollers, computes the hash */
+static void compute_hash(uint256_t hash) {
     uint8_t pin_array[CONFIG_JOLT_GUI_PIN_LEN] = { 0 };
     // Parse and zero out the pin array
     printf("Entered PIN: ");
@@ -71,9 +73,40 @@ static lv_action_t pin_entry_cb(lv_obj_t roller) {
     }
     printf("\n");
 
-    //jolt_gui_delete_current_screen();
+    /* Convert pin into a 256-bit key */
+    crypto_generichash_blake2b_state hs;
+    crypto_generichash_init(&hs, NULL, 32, 32);
+    crypto_generichash_update(&hs, (unsigned char *) pin_array,
+            CONFIG_JOLT_GUI_PIN_LEN);
+    crypto_generichash_final(&hs, hash, 32);
+}
 
-    // todo: call the caller callback
+static lv_action_t pin_verify_cb(lv_obj_t roller) {
+    CONFIDENTIAL uint256_t pin_hash_verify = { 0 };
+    compute_hash(pin_hash_verify);
+
+    jolt_gui_delete_current_screen();
+    
+    // Verify the pins match
+    if( 0 == memcmp(pin_hash, pin_hash_verify, sizeof(pin_hash_verify)) ){
+        sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
+        // todo: launch next action
+    }
+    else{
+        sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
+        jolt_gui_text_create("Pin Setup", "Pin Mismatch! Please try again.");
+    }
+
+    return 0;
+}
+
+static lv_action_t pin_entry_cb(lv_obj_t roller) {
+    compute_hash(pin_hash);
+
+    jolt_gui_delete_current_screen();
+
+    jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN, JOLT_GUI_NO_DECIMAL,
+             "PIN Verify", pin_verify_cb); 
 
     return 0;
 }

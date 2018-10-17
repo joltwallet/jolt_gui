@@ -69,25 +69,7 @@ bool jolt_gui_delete_current_screen() {
 }
 
 static lv_action_t back_release_action(lv_obj_t *btn) {
-    lv_obj_t *submenu = lv_group_get_focused(jolt_gui_store.group.main);
-
-    if( jolt_gui_store.digit.pos <= 0 ) {
-        /* Close the current container */
-        jolt_gui_delete_current_screen();
-    }
-    else {
-        /* Preserve the currently selected roller value */
-        lv_roller_ext_t *ext = lv_obj_get_ext_attr(
-                jolt_gui_store.digit.rollers[jolt_gui_store.digit.pos]);
-        ext->ddlist.sel_opt_id_ori = ext->ddlist.sel_opt_id;
-
-        /* Decrement position and refocus */
-        jolt_gui_store.digit.pos--;
-        MSG("Decrementing jolt_gui_store.digit.pos to %d\n",
-                jolt_gui_store.digit.pos);
-        lv_group_focus_obj(jolt_gui_store.digit.rollers[
-                jolt_gui_store.digit.pos]);
-    }
+    jolt_gui_delete_current_screen();
     return 0;
 }
 
@@ -117,6 +99,7 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
     jolt_gui_title_create(parent, title);
 
     jolt_gui_set_enter_action(parent, jolt_gui_fwd_main);
+    jolt_gui_set_back_action(parent, jolt_gui_delete_current_screen);
     return menu;
 }
 
