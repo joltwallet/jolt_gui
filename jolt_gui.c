@@ -133,6 +133,8 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
 
     lv_group_focus_obj(page);
 
+    jolt_gui_set_back_action(parent, jolt_gui_delete_current_screen);
+
     return parent;
 }
 
@@ -179,25 +181,6 @@ static lv_action_t woof(lv_obj_t btn) {
     return 0;
 }
 
-// todo delete this
-static lv_res_t list_release_action(lv_obj_t * list_btn) {
-    /* PLACEHOLDER STUB*/
-    printf("List element click:%s\n", lv_list_get_btn_text(list_btn));
-    return LV_RES_OK; /*Return OK because the list is not deleted*/
-}
-
-// todo delete this
-static lv_res_t jolt_gui_test_submenu_create(lv_obj_t * list_btn) {
-    /*Create the list*/
-    lv_obj_t *settings_list = jolt_gui_menu_create("Settings",
-            NULL, "WiFi", list_release_action);
-    lv_list_add(settings_list, NULL, "Bluetooth", list_release_action);
-    lv_list_add(settings_list, NULL, "Long Option Name Scrolls",
-            list_release_action);
-    lv_list_add(settings_list, NULL, "Factory Reset", list_release_action);
-    return LV_RES_OK;
-}
-
 void jolt_gui_create() {
     /* Set Jolt ssd1306 theme */
     lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
@@ -228,7 +211,6 @@ void jolt_gui_create() {
     }
     else {
         main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry", woof);
-        lv_list_add(main_menu_list, NULL, "submenu", jolt_gui_test_submenu_create);
         lv_list_add(main_menu_list, NULL, "Dummy 1", NULL);
         lv_list_add(main_menu_list, NULL, "Dummy 2", NULL);
         lv_list_add(main_menu_list, NULL, "Dummy 3", NULL);
@@ -267,7 +249,6 @@ lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
 }
 
 lv_action_t jolt_gui_fwd_main(lv_obj_t *btn) {
-    printf("boop\n");
     lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_ENTER);
     return 0;
 }

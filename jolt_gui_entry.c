@@ -31,7 +31,6 @@ static lv_action_t back_cb(lv_obj_t *btn);
 static lv_group_focus_cb_t update_selected_roller_style(lv_obj_t *roller) {
     /* Only the focused roller has 3 visible selections;
      * all unselected rollers only have 1 */
-    MSG("roller style callback!\n");
     if(jolt_gui_store.digit.pos != 0 ) {
 	    lv_obj_align(jolt_gui_store.digit.rollers[0],
                 NULL, LV_ALIGN_IN_LEFT_MID, jolt_gui_store.digit.offset, 0);
@@ -166,6 +165,7 @@ lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
     /* Create Title Label */
     jolt_gui_title_create(parent, title);
 
+    /* Set Back Action (delete pin screen) */
     jolt_gui_set_back_action(parent, &back_cb);
 
     return parent;
