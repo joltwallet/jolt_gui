@@ -118,15 +118,27 @@ static lv_action_t screen_finish_create(lv_obj_t *btn) {
 
 static lv_action_t screen_pin_verify_create(lv_obj_t *btn) {
     compute_hash(pin_hash); // compute hash for first pin entry screen
-
+#if 0
     jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN,
             JOLT_GUI_NO_DECIMAL, "PIN Verify", &screen_finish_create); 
+#endif
     return 0;
 }
 
 static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
+    lv_obj_t *parent = jolt_gui_parent_create();
+    lv_obj_align(parent, jolt_gui_store.statusbar.container, 
+            LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+    lv_obj_t *pin_screen = jolt_gui_num_create(parent, NULL);
+    lv_obj_set_size(pin_screen, LV_HOR_RES, LV_VER_RES-CONFIG_JOLT_GUI_STATUSBAR_H);
+    jolt_gui_num_set_num_digits(pin_screen, 2);
+    lv_group_add_obj(jolt_gui_store.group.main, pin_screen);
+    lv_group_focus_obj(pin_screen);
+    jolt_gui_set_enter_action(parent, &jolt_gui_fwd_main);
+#if 0
     jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN,
             JOLT_GUI_NO_DECIMAL, "PIN Setup", &screen_pin_verify_create); 
+#endif
     return 0;
 }
 
@@ -150,6 +162,10 @@ static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
     return 0;
 }
 
+static lv_action_t dummy(lv_obj_t *obj){
+    return 0;
+}
+
 /* Called externally to begin the first-boot GUI */
 void jolt_gui_first_boot_create() {
     generate_mnemonic();
@@ -158,5 +174,6 @@ void jolt_gui_first_boot_create() {
             "Welcome to Jolt, "
             "please backup the following secret mnemonic.");
     jolt_gui_set_enter_action(scr, &screen_mnemonic_create);
+    jolt_gui_set_back_action(scr, &dummy);
 }
 
