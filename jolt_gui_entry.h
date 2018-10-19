@@ -44,6 +44,7 @@ typedef struct {
     lv_obj_t *decimal_obj;
     uint8_t spacing; // Distance between rollers
     uint8_t offset; // Distance between first roller and left screen
+    lv_group_t *g;
 } jolt_gui_num_ext_t;
 
 lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy);

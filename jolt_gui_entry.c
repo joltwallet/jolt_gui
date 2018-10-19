@@ -211,6 +211,7 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
     lv_obj_t *new_num = lv_cont_create(par, NULL);
     lv_mem_assert(new_num);
     if(new_num == NULL) return NULL;
+    lv_cont_set_fit(new_num, false, false);
     lv_obj_set_size(new_num, LV_HOR_RES, LV_VER_RES);
     lv_obj_set_pos(new_num, 0, 0);
 
@@ -227,6 +228,7 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
     ext->spacing = 0;
     ext->offset = 0;
     memset(ext->rollers, 0, CONFIG_JOLT_GUI_NUMERIC_LEN * sizeof(lv_obj_t *));
+    ext->g = lv_group_create();
 
     lv_obj_set_signal_func(new_num, jolt_gui_num_signal);
 
@@ -242,6 +244,7 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
         lv_obj_del( ext->rollers[0] );
     }*/
     ext->rollers[0] = digit_create(new_num);
+    lv_group_add_obj(ext->g, ext->rollers[0]);
 
     /*Init the new list object*/
     if(copy == NULL) {
@@ -272,9 +275,11 @@ void jolt_gui_num_set_num_digits(lv_obj_t *num, uint8_t n) {
         ext->offset = ( lv_obj_get_width(num) - 
                 (ext->n-1) * ext->spacing -
                 ext->n * roller_width ) / 2;
+        printf("n: %d\n", ext->n);
         printf("offset: %d\n", ext->offset);
         printf("spacing: %d\n", ext->spacing);
         printf("width: %d\n", roller_width);
+        printf("screen_width: %d\n", lv_obj_get_width(num));
     }
 
     /* Align first roller relative to container by offset */
@@ -291,6 +296,7 @@ void jolt_gui_num_set_num_digits(lv_obj_t *num, uint8_t n) {
         lv_obj_align(ext->rollers[i],
                 ext->rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
                 ext->spacing, 0);
+        lv_group_add_obj(ext->g, ext->rollers[i]);
     }
 
     //lv_group_focus_obj(ext->rollers[0]);
@@ -323,33 +329,49 @@ void jolt_gui_num_set_action(lv_obj_t *num, lv_action_t cb){
     lv_roller_set_action(ext->rollers[ext->n-1], cb);
 }
 
-static lv_res_t jolt_gui_num_signal(lv_obj_t *btn, lv_signal_t sign, void *param) {
-    printf("LV_SIGNAL_RELEASED const %d\n", LV_SIGNAL_RELEASED);
+static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param) {
+    //printf("LV_SIGNAL_RELEASED const %d\n", LV_SIGNAL_RELEASED);
     printf("doge %d\n", sign);
     lv_res_t res;
+    jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
 
     /* Include the ancestor signal function */
-    res = ancestor_signal(btn, sign, param);
+    res = ancestor_signal(num, sign, param);
     if(res != LV_RES_OK) return res;
 
 #if USE_LV_GROUP
     if(sign == LV_SIGNAL_CONTROLL){
         char c = *((char *)param);
+        lv_group_focus_obj(ext->rollers[ext->pos]);
         switch(c){
-            case LV_GROUP_KEY_DOWN:
-                printf("Pressed Down\n");
-                break;
             case LV_GROUP_KEY_UP:
                 printf("Pressed up\n");
+                lv_group_send_data(ext->g, LV_GROUP_KEY_UP);
+                break;
+            case LV_GROUP_KEY_DOWN:
+                printf("Pressed Down\n");
+                lv_group_send_data(ext->g, LV_GROUP_KEY_DOWN);
+                break;
+            case LV_GROUP_KEY_LEFT:
+                printf("Pressed enter\n");
+                if( ext->pos > 0 ) {
+                    (ext->pos)--;
+                    lv_group_focus_obj(ext->rollers[ext->pos]);
+                }
+
                 break;
             case LV_GROUP_KEY_ENTER:
                 printf("Pressed enter\n");
+                if(ext->pos < ext->n) {
+                    (ext->pos)++;
+                    lv_group_focus_obj(ext->rollers[ext->pos]);
+                }
                 break;
             default:
                 break;
         }
         if(sign == LV_SIGNAL_RELEASED) {
-            lv_obj_t *num = lv_obj_get_parent(lv_obj_get_parent(btn));
+            //lv_obj_t *num = lv_obj_get_parent(lv_obj_get_parent(btn));
             lv_group_t *g = lv_obj_get_group(num);
             if(lv_group_get_focused(g) == num 
                     && lv_indev_is_dragging(lv_indev_get_act()) == false) {

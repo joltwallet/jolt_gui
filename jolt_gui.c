@@ -98,7 +98,7 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
     /* Create and Stylize Statusbar Title */
     jolt_gui_title_create(parent, title);
 
-    jolt_gui_set_enter_action(parent, jolt_gui_fwd_main);
+    jolt_gui_set_enter_action(parent, jolt_gui_send_enter_main);
     jolt_gui_set_back_action(parent, jolt_gui_delete_current_screen);
     return menu;
 }
@@ -248,7 +248,12 @@ lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
     return btn;
 }
 
-lv_action_t jolt_gui_fwd_main(lv_obj_t *btn) {
+lv_action_t jolt_gui_send_enter_main(lv_obj_t *btn) {
     lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_ENTER);
+    return 0;
+}
+
+lv_action_t jolt_gui_send_left_main(lv_obj_t *btn) {
+    lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_LEFT);
     return 0;
 }

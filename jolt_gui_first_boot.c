@@ -134,7 +134,8 @@ static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
     jolt_gui_num_set_num_digits(pin_screen, 2);
     lv_group_add_obj(jolt_gui_store.group.main, pin_screen);
     lv_group_focus_obj(pin_screen);
-    jolt_gui_set_enter_action(parent, &jolt_gui_fwd_main);
+    jolt_gui_set_enter_action(parent, &jolt_gui_send_enter_main);
+    jolt_gui_set_back_action(parent, &jolt_gui_send_left_main);
 #if 0
     jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN,
             JOLT_GUI_NO_DECIMAL, "PIN Setup", &screen_pin_verify_create); 
