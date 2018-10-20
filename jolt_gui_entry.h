@@ -38,13 +38,12 @@ lv_obj_t *jolt_gui_numeric_create( int8_t n, int8_t decimal, const char *title,
 
 typedef struct {
     lv_obj_t *rollers[CONFIG_JOLT_GUI_NUMERIC_LEN];
-    uint8_t n; // Number of digits
+    uint8_t len; // Number of digits
     int8_t pos;
     int8_t decimal; // Position of decimal point from right.
     lv_obj_t *decimal_obj;
     uint8_t spacing; // Distance between rollers
     uint8_t offset; // Distance between first roller and left screen
-    lv_group_t *g;
 } jolt_gui_num_ext_t;
 
 lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy);
