@@ -27,7 +27,6 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
         strlcpy(buf, "Continue", buf_len);
         return E_SUCCESS;
     }
-
     // Copy over number prefix
     sprintf(buf, "%d. ", n+1); // 1-indexing
     buf_len -= 3;
@@ -36,7 +35,6 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
         buf_len--;
         buf++;
     }
-
     // Copy over the nth word
     for(uint8_t i = 0; str!=0; str++){
         if( i == n ){
@@ -58,17 +56,9 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
 }
 
 /* Collects the information on the rollers, computes the hash */
-static void compute_hash(uint256_t hash) {
+static void compute_hash(lv_obj_t *num, uint256_t hash) {
     uint8_t pin_array[CONFIG_JOLT_GUI_PIN_LEN] = { 0 };
-    // Parse and zero out the pin array
-    printf("Entered PIN: ");
-    for(uint8_t i=0; i < sizeof(pin_array); i++) {
-        pin_array[i] = 9 - (lv_roller_get_selected(jolt_gui_store.digit.rollers[i]) % 10);
-        //todo: securely zero out the rollers
-        //pin_array[i] = lv_roller_get_selected(jolt_gui_store.digit.rollers[i]);
-        printf("%d ", pin_array[i]);
-    }
-    printf("\n");
+    jolt_gui_num_get_arr( num, pin_array, sizeof(pin_array) );
 
     /* Convert pin into a 256-bit key */
     crypto_generichash_blake2b_state hs;
@@ -99,13 +89,25 @@ static void generate_mnemonic() {
     ESP_LOGI(TAG, "mnemonic %s", mnemonic);
 }
 
-static lv_action_t screen_finish_create(lv_obj_t *btn) {
+static lv_action_t screen_finish_create(lv_obj_t *num) {
     CONFIDENTIAL static uint256_t pin_hash_verify;
-    compute_hash(pin_hash_verify);
+    compute_hash(num, pin_hash_verify);
     // Verify the pins match
     if( 0 == memcmp(pin_hash, pin_hash_verify, sizeof(pin_hash_verify)) ){
         sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
         // todo: store and reboot
+#if 0
+        storage_set_mnemonic(mnemonic_bin, pin_hash);
+        storage_set_pin_count(0); // Only does something if pin_count is setable
+        uint32_t pin_count = storage_get_pin_count();
+        storage_set_pin_last(pin_count);
+
+        sodium_memzero(pin_hash, sizeof(pin_hash));
+        sodium_memzero(mnemonic_bin, sizeof(mnemonic_bin));
+        sodium_memzero(mnemonic, sizeof(mnemonic));
+
+        esp_restart();
+#endif
     }
     else{
         sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
@@ -116,18 +118,16 @@ static lv_action_t screen_finish_create(lv_obj_t *btn) {
     return 0;
 }
 
-static lv_action_t screen_pin_verify_create(lv_obj_t *btn) {
-    compute_hash(pin_hash); // compute hash for first pin entry screen
-#if 0
-    jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN,
+static lv_action_t screen_pin_verify_create(lv_obj_t *num) {
+    compute_hash(num, pin_hash); // compute hash for first pin entry screen
+    jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
             JOLT_GUI_NO_DECIMAL, "PIN Verify", &screen_finish_create); 
-#endif
     return 0;
 }
 
 static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
-    lv_obj_t *screen = jolt_gui_num_screen_create(3, -1, 
-            "PIN", dummy);
+    lv_obj_t *screen = jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
+            1, "PIN", screen_pin_verify_create);
     return 0;
 }
 
@@ -148,6 +148,7 @@ static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
             lv_list_add(scr, NULL, buf, NULL);
         }
     }
+
     return 0;
 }
 

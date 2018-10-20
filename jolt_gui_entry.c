@@ -67,6 +67,7 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
     ext->decimal = -1;
     ext->spacing = 0;
     ext->offset = 0;
+    ext->enter_cb = NULL;
     ext->back_cb = NULL;
     memset(ext->rollers, 0, CONFIG_JOLT_GUI_NUMERIC_LEN * sizeof(lv_obj_t *));
 
@@ -163,10 +164,22 @@ void jolt_gui_num_set_decimal(lv_obj_t *num, uint8_t pos) {
     }
 }
 
-void jolt_gui_num_set_enter_action(lv_obj_t *num, lv_action_t cb){
-    /* Setup Callback on last roller */
+uint8_t jolt_gui_num_get_arr(lv_obj_t *num, uint8_t *arr, uint8_t arr_len) {
     jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
-    lv_roller_set_action(ext->rollers[ext->len-1], cb);
+    if( arr_len < ext->len ) {
+        /* insufficient output buffer */
+        return 1;
+    }
+    for(uint8_t i=0; i < ext->len; i++) {
+        arr[i] = 9 - (lv_roller_get_selected(ext->rollers[i]) % 10);
+    }
+
+    printf("Entered PIN: ");
+    for(uint8_t i=0; i < ext->len; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    return 0;
 }
 
 static void loop_roller( lv_obj_t *rol) {
@@ -250,9 +263,7 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
                 }
                 else {
                     //perform enter action callback
-                   ext->rollers[ext->pos]->signal_func(
-                        ext->rollers[ext->pos],
-                        LV_SIGNAL_CONTROLL, param);
+                    (ext->enter_cb)(num);
                 }
                 break;
             }
@@ -263,6 +274,11 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
 #endif
 
     return res;
+}
+
+void jolt_gui_num_set_enter_action(lv_obj_t *num, lv_action_t cb){
+    jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
+    ext->enter_cb = cb;
 }
 
 void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb){
