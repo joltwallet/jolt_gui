@@ -17,6 +17,7 @@ static const char TAG[] = "first_boot";
 static CONFIDENTIAL uint256_t mnemonic_bin;
 static CONFIDENTIAL char mnemonic[BM_MNEMONIC_BUF_LEN];
 static CONFIDENTIAL uint256_t pin_hash;
+static lv_action_t dummy(lv_obj_t *obj);
 
 static jolt_err_t get_nth_word(char buf[], size_t buf_len,
         const char *str, const uint32_t n){
@@ -83,8 +84,7 @@ static void generate_mnemonic() {
     {
         /* Mix in entropy from ataes132a */
         CONFIDENTIAL uint256_t aes132_entropy;
-        uint8_t res;
-        res = aes132_rand(aes132_entropy, sizeof(aes132_entropy));
+        uint8_t res = aes132_rand(aes132_entropy, sizeof(aes132_entropy));
         if( res ) {
             esp_restart();
         }
@@ -126,35 +126,8 @@ static lv_action_t screen_pin_verify_create(lv_obj_t *btn) {
 }
 
 static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
-    lv_obj_t *parent = jolt_gui_parent_create();
-    lv_obj_align(parent, jolt_gui_store.statusbar.container, 
-            LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
-
-    lv_obj_t *pin_screen = jolt_gui_num_create(parent, NULL);
-    //lv_obj_set_size(pin_screen, LV_HOR_RES, LV_VER_RES-CONFIG_JOLT_GUI_STATUSBAR_H);
-
-    jolt_gui_num_set_num_digits(pin_screen, 3);
-    lv_obj_align(pin_screen, NULL,
-            LV_ALIGN_IN_TOP_LEFT, 0, 0);
-    lv_obj_invalidate(pin_screen);
-
-
-    printf("x: %d\n", lv_obj_get_x(parent) );
-    printf("y: %d\n", lv_obj_get_y(parent) );
-
-    printf("x: %d\n", lv_obj_get_x(pin_screen) );
-    printf("y: %d\n", lv_obj_get_y(pin_screen) );
-
-    lv_group_add_obj(jolt_gui_store.group.main, pin_screen);
-    lv_group_focus_obj(pin_screen);
-
-    jolt_gui_set_enter_action(parent, &jolt_gui_send_enter_main);
-    jolt_gui_set_back_action(parent, &jolt_gui_send_left_main);
-
-#if 0
-    jolt_gui_numeric_create( CONFIG_JOLT_GUI_PIN_LEN,
-            JOLT_GUI_NO_DECIMAL, "PIN Setup", &screen_pin_verify_create); 
-#endif
+    lv_obj_t *screen = jolt_gui_num_screen_create(3, -1, 
+            "PIN", dummy);
     return 0;
 }
 
@@ -179,16 +152,12 @@ static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
 }
 
 static lv_action_t dummy(lv_obj_t *obj){
+    printf("dummy\n");
     return 0;
 }
 
 /* Called externally to begin the first-boot GUI */
 void jolt_gui_first_boot_create() {
-    screen_pin_entry_create(NULL);
-    return;
-
-
-
     generate_mnemonic();
 
     lv_obj_t *scr = jolt_gui_text_create( "First Startup",

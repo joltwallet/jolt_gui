@@ -44,13 +44,17 @@ typedef struct {
     lv_obj_t *decimal_obj;
     uint8_t spacing; // Distance between rollers
     uint8_t offset; // Distance between first roller and left screen
+    lv_action_t back_cb;
 } jolt_gui_num_ext_t;
 
 lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy);
-void jolt_gui_num_set_num_digits(lv_obj_t *num, uint8_t n);
+void jolt_gui_num_set_len(lv_obj_t *num, uint8_t n);
 void jolt_gui_num_set_decimal(lv_obj_t *num, uint8_t pos);
-void jolt_gui_num_set_action(lv_obj_t *num, lv_action_t cb);
-//void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb);
+void jolt_gui_num_set_enter_action(lv_obj_t *num, lv_action_t cb);
+void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb);
+//
+lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp, 
+        const char *title, lv_action_t cb);
 
 
 
