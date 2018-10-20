@@ -90,17 +90,6 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
     if(new_num == NULL) return NULL;
     lv_obj_set_size(new_num, LV_HOR_RES, LV_VER_RES-CONFIG_JOLT_GUI_STATUSBAR_H);
 
-#if 0
-    /* todo: Keep pad.hor space on the left and pad.inner space between the children. */
-    static lv_style_t style;
-    lv_style_copy(&style, lv_obj_get_style(new_num));
-    style.body.padding.hor = 1;
-    style.body.padding.inner = 10;
-    lv_obj_set_style(new_num, &style);
-    lv_cont_set_layout(new_num, LV_LAYOUT_ROW_M);
-#endif
-    lv_cont_set_layout(new_num, LV_LAYOUT_OFF);
-
     if(ancestor_signal == NULL) ancestor_signal = lv_obj_get_signal_func(new_num);
 
     /* Declare and initialize ext */
@@ -152,11 +141,13 @@ static void jolt_gui_num_align(lv_obj_t *num) {
         ext->spacing = ( cont_w - ext->len*rol_w ) / ext->len;
         ext->offset = ( cont_w - 
                 (ext->len-1) * ext->spacing - ext->len * rol_w ) / 2;
+#if 0
         printf("n: %d\n", ext->len);
         printf("offset: %d\n", ext->offset);
         printf("spacing: %d\n", ext->spacing);
         printf("width: %d\n", rol_w);
         printf("container_width: %d\n", cont_w);
+#endif
     }
 
     for(uint8_t i=0; i < ext->len; i++) {
@@ -235,10 +226,10 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
     jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
 
     /* Include the ancestor signal function */
-    /*
+#if 0
     res = ancestor_signal(num, sign, param);
     if(res != LV_RES_OK) return res;
-    */
+#endif
 
     if(sign == LV_SIGNAL_CORD_CHG) {
         printf("coord changed\n");
@@ -255,16 +246,27 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
 #if USE_LV_GROUP
     else if(sign == LV_SIGNAL_CONTROLL){
         char c = *((char *)param);
-        printf("pos: %d\n", ext->pos);
-        printf("x: %d\n", lv_obj_get_x(ext->rollers[ext->pos]) );
-        printf("y: %d\n", lv_obj_get_y(ext->rollers[ext->pos]) );
+        //printf("pos: %d\n", ext->pos);
+        //printf("x: %d\n", lv_obj_get_x(ext->rollers[ext->pos]) );
+        //printf("y: %d\n", lv_obj_get_y(ext->rollers[ext->pos]) );
+        
+        {
+            lv_obj_t *rol = ext->rollers[ext->pos];
+            lv_roller_ext_t *rol_ext = lv_obj_get_ext_attr(rol);
+            uint8_t id = rol_ext->ddlist.sel_opt_id;
+            if( id < 10 ) { // todo refine loop point
+                lv_roller_set_selected(rol, id + 10, false);
+            }
+            if( id >25 ) { // todo refine loop point
+                lv_roller_set_selected(rol, id - 10, false);
+            }
+        }
 
         switch(c){
             case LV_GROUP_KEY_UP:
                 printf("Pressed up\n");
-                ext->rollers[ext->pos]->signal_func(
-                        ext->rollers[ext->pos],
-                        LV_SIGNAL_CONTROLL, param);
+                lv_obj_t *rol = ext->rollers[ext->pos];
+                rol->signal_func(rol, LV_SIGNAL_CONTROLL, param);
                 break;
             case LV_GROUP_KEY_DOWN:
                 printf("Pressed Down\n");
