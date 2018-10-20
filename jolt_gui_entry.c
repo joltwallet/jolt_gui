@@ -141,14 +141,8 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
     return new_num;
 }
 
-void jolt_gui_num_set_num_digits(lv_obj_t *num, uint8_t n) {
-    /* todo; garbage collection on previously defined rollers */
-    if( 0 == n || n > CONFIG_JOLT_GUI_NUMERIC_LEN) {
-        return;
-    }
+static void jolt_gui_num_align(lv_obj_t *num) {
     jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
-
-    ext->len = n; // update number of rollers
 
     /* Compute Roller Spacing */
     {
@@ -165,23 +159,46 @@ void jolt_gui_num_set_num_digits(lv_obj_t *num, uint8_t n) {
         printf("container_width: %d\n", cont_w);
     }
 
-    /* Align first roller relative to container by offset */
-    lv_obj_align(ext->rollers[0], NULL,
-            LV_ALIGN_IN_LEFT_MID, ext->offset, 0);
+    for(uint8_t i=0; i < ext->len; i++) {
+        if(ext->pos == i){
+            lv_roller_set_visible_row_count(ext->rollers[i], 3);
+        }
+        else{
+            lv_roller_set_visible_row_count(ext->rollers[i], 1);
+        }
+        if(0 == i){
+            lv_obj_align(ext->rollers[i],
+                    NULL, LV_ALIGN_IN_LEFT_MID, 
+                    ext->offset, 0);
+        }
+        else{
+            lv_obj_align(ext->rollers[i],
+                    ext->rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
+                    ext->spacing, 0);
+        }
+    }
+
+}
+
+void jolt_gui_num_set_num_digits(lv_obj_t *num, uint8_t n) {
+    /* todo; garbage collection on previously defined rollers */
+    if( 0 == n || n > CONFIG_JOLT_GUI_NUMERIC_LEN) {
+        return;
+    }
+    jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
+
+    ext->len = n; // update number of rollers
+
 
     for(uint8_t i=1; i < ext->len; i++) {
         if( NULL != ext->rollers[i] ) {
             //lv_obj_del(ext->rollers[i]);
             printf("oh no\n");
         }
-
         ext->rollers[i] = lv_roller_create(num, ext->rollers[0]);
-        lv_roller_set_visible_row_count(ext->rollers[i], 1);
-        lv_obj_align(ext->rollers[i],
-                ext->rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
-                ext->spacing, 0);
     }
 
+    jolt_gui_num_align(num);
     //lv_cont_set_layout(num, LV_LAYOUT_ROW_M);
 }
 
@@ -279,11 +296,7 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
                     lv_roller_ext_t *rol_ext = lv_obj_get_ext_attr(
                             ext->rollers[ext->pos]);
                     rol_ext->ddlist.sel_opt_id_ori = rol_ext->ddlist.sel_opt_id;
-                    lv_roller_set_visible_row_count(
-                            ext->rollers[ext->pos], 1);
                     (ext->pos)++;
-                    lv_roller_set_visible_row_count(
-                            ext->rollers[ext->pos], 3);
                 }
                 else {
                     //perform action callback
@@ -292,6 +305,7 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
             default:
                 break;
         }
+        jolt_gui_num_align(num);
 #if 0
         if(sign == LV_SIGNAL_RELEASED) {
             //lv_obj_t *num = lv_obj_get_parent(lv_obj_get_parent(btn));
