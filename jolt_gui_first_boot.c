@@ -6,6 +6,7 @@
 #include "jolttypes.h"
 
 #include "sodium.h"
+#include "hal/storage/storage.h"
 
 #if CONFIG_JOLT_STORE_ATAES132A
 #include "aes132_cmd.h"
@@ -96,7 +97,6 @@ static lv_action_t screen_finish_create(lv_obj_t *num) {
     if( 0 == memcmp(pin_hash, pin_hash_verify, sizeof(pin_hash_verify)) ){
         sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
         // todo: store and reboot
-#if 0
         storage_set_mnemonic(mnemonic_bin, pin_hash);
         storage_set_pin_count(0); // Only does something if pin_count is setable
         uint32_t pin_count = storage_get_pin_count();
@@ -107,7 +107,6 @@ static lv_action_t screen_finish_create(lv_obj_t *num) {
         sodium_memzero(mnemonic, sizeof(mnemonic));
 
         esp_restart();
-#endif
     }
     else{
         sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
