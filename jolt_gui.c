@@ -1,6 +1,5 @@
 #include "jolt_gui.h"
 #include "stdio.h"
-#include "lv_theme_jolt.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_symbols.h"
 #include "jolt_gui_statusbar.h"
@@ -16,12 +15,10 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static lv_action_t back_release_action(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
-static lv_obj_t *main_menu_list;
 
 /**********************
  *      MACROS
@@ -45,32 +42,26 @@ bool jolt_gui_delete_current_screen() {
         MSG("Nothing in focus\n");
         return 0;
     }
-    if( scrn == main_menu_list ) {
+    if( scrn == jolt_gui_store.main_menu_list ) {
         MSG("Can't exit main menu\n");
         return 0;
     }
 
     // Disable any focus callback
     lv_group_set_focus_cb(jolt_gui_store.group.main, NULL);
-    jolt_gui_store.digit.pos = -1; // just to be doubly sure
     lv_obj_t *parent = scrn;
     lv_obj_t *tmp = scrn;
     while( (tmp = lv_obj_get_parent(tmp)) ) {
         if( tmp != lv_scr_act() ) {
             parent = tmp;
         }
-        if( tmp == main_menu_list ) {
+        if( tmp == jolt_gui_store.main_menu_list ) {
             return false;
         }
     }
     MSG("deleting %p\n", parent);
     lv_obj_del(parent);
     return true;
-}
-
-static lv_action_t back_release_action(lv_obj_t *btn) {
-    jolt_gui_delete_current_screen();
-    return 0;
 }
 
 lv_obj_t *jolt_gui_parent_create() {
@@ -175,51 +166,6 @@ void jolt_gui_group_create() {
     jolt_gui_store.group.back = lv_group_create();
     jolt_gui_store.group.enter = lv_group_create();
     lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
-}
-static lv_action_t woof(lv_obj_t btn) {
-    printf("woof\n");
-    return 0;
-}
-
-void jolt_gui_create() {
-    /* Set Jolt ssd1306 theme */
-    lv_theme_t *th = lv_theme_jolt_init(100, &synchronizer7);
-    lv_theme_set_current(th);  
-
-    // Don't need to set group since indev driver sends direct keypresses
-    lv_obj_t *btn_back = lv_btn_create(lv_scr_act(), NULL);
-    lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, &back_release_action);
-    lv_group_add_obj(jolt_gui_store.group.back, btn_back);
-
-    /* Create StatusBar */
-    statusbar_create();
-
-    /*Create the list*/
-#if PC_SIMULATOR
-    main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
-            jolt_gui_test_pin_create);
-    lv_list_add(main_menu_list, NULL, "Loading Test", jolt_gui_test_loading_create);
-    lv_list_add(main_menu_list, NULL, "Alphabet", jolt_gui_test_alphabet_create);
-    lv_list_add(main_menu_list, NULL, "Numeric Begin", jolt_gui_test_numeric_begin_dp_create);
-    lv_list_add(main_menu_list, NULL, "Numeric End", jolt_gui_test_numeric_end_dp_create);
-    lv_list_add(main_menu_list, NULL, "Numeric Mid", jolt_gui_test_numeric_mid_dp_create);
-    lv_list_add(main_menu_list, NULL, "Text Test", jolt_gui_test_text_create);
-    lv_list_add(main_menu_list, NULL, "Submenu", jolt_gui_test_submenu_create);
-#elif ESP_PLATFORM
-    if( true && jolt_gui_store.first_boot ) {
-        jolt_gui_first_boot_create();
-    }
-    else {
-        main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry", woof);
-        lv_list_add(main_menu_list, NULL, "Dummy 1", NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 2", NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 3", NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 4", NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 5", NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 6", NULL);
-        lv_list_add(main_menu_list, NULL, "Dummy 7", NULL);
-    }
-#endif
 }
 
 lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb) {

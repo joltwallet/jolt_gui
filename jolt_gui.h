@@ -7,6 +7,7 @@
 #include "jolt_gui_statusbar.h"
 #include "jolt_gui_symbols.h"
 #include "jolt_gui_first_boot.h"
+#include "menus/home.h"
 
 #if PC_SIMULATOR
     #include "test_stubs.h"
@@ -34,19 +35,12 @@ typedef struct hardware_monitor_t {
 struct {
     bool first_boot;
     SemaphoreHandle_t mutex; // mutex for the entire gui system
+    lv_obj_t *main_menu_list;
     struct {
         lv_group_t *main; // Parent group for user input
         lv_group_t *back; // Group used to handle back button
         lv_group_t *enter;
     } group;
-    struct {
-        lv_obj_t *rollers[CONFIG_JOLT_GUI_NUMERIC_LEN];
-        uint8_t n; // Number of digits
-        int8_t pos; // Dictates function of back button
-        int8_t decimal; // Position of decimal point from right.
-        uint8_t spacing; // Distance between rollers
-        uint8_t offset; // Distance between first roller and left screen
-    } digit;
     struct {
         lv_obj_t *container;
         lv_obj_t *label;
@@ -65,9 +59,6 @@ struct {
 /* Run before running jolt_gui_create();
  * Creates all the groups and registers the in-device to the groups */
 void jolt_gui_group_create();
-
-/* Creates the Jolt GUI */
-void jolt_gui_create();
 
 /* Creates a title in the top left statusbar. 
  * Allocates and copies the title string. */
