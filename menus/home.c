@@ -1,5 +1,6 @@
 #include "jolt_gui/jolt_gui.h"
 #include "jolt_gui/lv_theme_jolt.h"
+#include "settings.h"
 
 /**********************
  *  STATIC PROTOTYPES
@@ -52,7 +53,8 @@ void jolt_gui_menu_home_create() {
     else {
         jolt_gui_store.main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry", woof);
         lv_obj_t *mmlist = jolt_gui_store.main_menu_list;
-        lv_list_add(mmlist, NULL, "Dummy 1", NULL);
+        lv_list_add(mmlist, NULL, "Settings", menu_settings_create);
+        lv_list_add(mmlist, NULL, "woof", woof);
         lv_list_add(mmlist, NULL, "Dummy 2", NULL);
         lv_list_add(mmlist, NULL, "Dummy 3", NULL);
         lv_list_add(mmlist, NULL, "Dummy 4", NULL);
