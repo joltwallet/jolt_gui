@@ -1,6 +1,10 @@
 #include "jolt_gui/jolt_gui.h"
 #include "jolt_gui/lv_theme_jolt.h"
 #include "settings.h"
+#include "syscore/filesystem.h"
+//#include "jolt_helpers.h"
+
+#include "esp_log.h"
 
 /**********************
  *  STATIC PROTOTYPES
@@ -9,6 +13,7 @@
 /**********************
  *  STATIC VARIABLES
  **********************/
+static const char TAG[] = "menu_home";
 
 
 static lv_action_t woof(lv_obj_t btn) {
@@ -51,6 +56,17 @@ void jolt_gui_menu_home_create() {
         jolt_gui_first_boot_create();
     }
     else {
+        // Find and Verify All User Apps
+        uint32_t n_fns = get_all_fns(NULL, 0, ".elf", true);
+        ESP_LOGI(TAG, "Found %x apps.", n_fns);
+        if( n_fns > 0 ) {
+            if( NULL != jolt_gui_store.fns ) {
+                free(jolt_gui_store.fns);
+            }
+            jolt_gui_store.fns = malloc_char_array(n_fns);
+            get_all_fns(jolt_gui_store.fns, n_fns, ".elf", true);
+        }
+
         jolt_gui_store.main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry", woof);
         lv_obj_t *mmlist = jolt_gui_store.main_menu_list;
         lv_list_add(mmlist, NULL, "Settings", menu_settings_create);

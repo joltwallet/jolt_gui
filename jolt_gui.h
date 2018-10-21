@@ -36,6 +36,7 @@ struct {
     bool first_boot;
     SemaphoreHandle_t mutex; // mutex for the entire gui system
     lv_obj_t *main_menu_list;
+    char **fns;
     struct {
         lv_group_t *main; // Parent group for user input
         lv_group_t *back; // Group used to handle back button
