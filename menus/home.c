@@ -2,7 +2,8 @@
 #include "jolt_gui/lv_theme_jolt.h"
 #include "settings.h"
 #include "syscore/filesystem.h"
-//#include "jolt_helpers.h"
+#include "syscore/launcher.h"
+#include "jolt_helpers.h"
 
 #include "esp_log.h"
 
@@ -23,6 +24,13 @@ static lv_action_t woof(lv_obj_t btn) {
 
 static lv_action_t back_release_action(lv_obj_t *btn) {
     jolt_gui_delete_current_screen();
+    return 0;
+}
+
+static lv_action_t launch_file_proxy(lv_obj_t *btn) {
+    char *fn = lv_list_get_btn_text( btn );
+    ESP_LOGI(TAG, "Launching %s", fn);
+    launch_file(fn, "app_main", 0, NULL);
     return 0;
 }
 
@@ -56,27 +64,33 @@ void jolt_gui_menu_home_create() {
         jolt_gui_first_boot_create();
     }
     else {
-        // Find and Verify All User Apps
-        uint32_t n_fns = get_all_fns(NULL, 0, ".elf", true);
-        ESP_LOGI(TAG, "Found %x apps.", n_fns);
+        // Find and all user apps
+        char **fns = NULL;
+        uint16_t n_fns = jolt_fs_get_all_elf_fns( &fns );
+
+        const char TITLE[] = "Main";
+
         if( n_fns > 0 ) {
-            if( NULL != jolt_gui_store.fns ) {
-                free(jolt_gui_store.fns);
+            ESP_LOGI(TAG, "Registering App \"%s\" into the GUI", fns[0]);
+            jolt_gui_store.main_menu_list = jolt_gui_menu_create(TITLE, NULL, fns[0], launch_file_proxy);
+            for(uint16_t i=1; i<n_fns; i++) {
+                ESP_LOGD(TAG, "Registering App \"%s\" into the GUI", fns[i]);
+                lv_list_add(jolt_gui_store.main_menu_list, NULL, fns[i], launch_file_proxy);
             }
-            jolt_gui_store.fns = malloc_char_array(n_fns);
-            get_all_fns(jolt_gui_store.fns, n_fns, ".elf", true);
+            lv_list_add(jolt_gui_store.main_menu_list, NULL, "Settings", menu_settings_create);
+        }
+        else {
+            jolt_gui_store.main_menu_list = jolt_gui_menu_create(TITLE, NULL, "Settings", menu_settings_create);
         }
 
-        jolt_gui_store.main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry", woof);
-        lv_obj_t *mmlist = jolt_gui_store.main_menu_list;
-        lv_list_add(mmlist, NULL, "Settings", menu_settings_create);
-        lv_list_add(mmlist, NULL, "woof", woof);
-        lv_list_add(mmlist, NULL, "Dummy 2", NULL);
-        lv_list_add(mmlist, NULL, "Dummy 3", NULL);
-        lv_list_add(mmlist, NULL, "Dummy 4", NULL);
-        lv_list_add(mmlist, NULL, "Dummy 5", NULL);
-        lv_list_add(mmlist, NULL, "Dummy 6", NULL);
-        lv_list_add(mmlist, NULL, "Dummy 7", NULL);
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 1", NULL);
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 2", NULL);
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 3", NULL);
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 4", NULL);
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 5", NULL);
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 6", NULL);
+
+        jolt_h_free_char_array(fns, n_fns);
     }
 #endif
 }
