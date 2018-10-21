@@ -17,6 +17,7 @@
     #include "freertos/queue.h"
     #include "freertos/task.h"
     #include "freertos/semphr.h"
+    #include "hal/hw_monitor.h"
 #endif
 
 
@@ -26,11 +27,6 @@
 /**********************
  *   GLOBAL VARIABLES
  **********************/
-/* To be defined in JoltOS */
-typedef struct hardware_monitor_t {
-    uint8_t val;
-    void (*update)(struct hardware_monitor_t *); // function to call to update val
-} hardware_monitor_t;
 
 struct {
     bool first_boot;

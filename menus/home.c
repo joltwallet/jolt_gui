@@ -64,7 +64,7 @@ void jolt_gui_menu_home_create() {
         jolt_gui_first_boot_create();
     }
     else {
-        // Find and all user apps
+        // Find and Register all user apps
         char **fns = NULL;
         uint16_t n_fns = jolt_fs_get_all_elf_fns( &fns );
 
