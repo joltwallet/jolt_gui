@@ -6,10 +6,12 @@
 #include "jolt_helpers.h"
 
 #include "esp_log.h"
+#include "jolt_gui/jolt_gui_qr.h"
 
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
@@ -83,6 +85,7 @@ void jolt_gui_menu_home_create() {
             jolt_gui_store.main_menu_list = jolt_gui_menu_create(TITLE, NULL, "Settings", menu_settings_create);
         }
 
+        lv_list_add(jolt_gui_store.main_menu_list, NULL, "QR", jolt_gui_test_qrcode_create);
         lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 1", NULL);
         lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 2", NULL);
         lv_list_add(jolt_gui_store.main_menu_list, NULL, "Dummy 3", NULL);
@@ -95,3 +98,19 @@ void jolt_gui_menu_home_create() {
 #endif
 }
 
+static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
+    const char buf[] = "meow";
+
+    QRCode qrcode;
+    // qrcode_bytes is referenced in QRCode
+    uint8_t qrcode_bytes[qrcode_getBufferSize(CONFIG_JOLT_QR_VERSION)];
+    qrcode_initText(&qrcode, qrcode_bytes, CONFIG_JOLT_QR_VERSION,
+                        ECC_LOW, buf);
+
+	lv_img_dsc_t *img = jolt_gui_qr_to_img(&qrcode);
+	lv_obj_t *scr = jolt_gui_qr_fullscreen_create(img, 1, "QR Test");
+
+    // todo: free the img buffer
+    //
+	return 0;
+}
