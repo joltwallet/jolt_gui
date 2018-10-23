@@ -107,7 +107,7 @@ static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
     qrcode_initText(&qrcode, qrcode_bytes, CONFIG_JOLT_QR_VERSION,
                         ECC_LOW, buf);
 
-	lv_img_dsc_t *img = jolt_gui_qr_to_img(&qrcode);
+	lv_img_dsc_t *img = jolt_gui_qr_to_img_dsc(&qrcode);
 	lv_obj_t *scr = jolt_gui_qr_fullscreen_create(img, 1, "QR Test");
 
     // todo: free the img buffer

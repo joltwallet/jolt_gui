@@ -6,7 +6,7 @@ static const uint8_t color_header[] = {
 };
 
 /* Will malloc the space. QRCode doesn't need to exist after this call*/
-lv_img_dsc_t *jolt_gui_qr_to_img(QRCode *qrcode) {
+lv_img_dsc_t *jolt_gui_qr_to_img_dsc(QRCode *qrcode) {
     uint8_t byte_width = qrcode->size / 8; // Number of bytes to store a row
     if( qrcode->size & 0x07 ) { // ceil to nearest byte
         byte_width++;
@@ -25,7 +25,7 @@ lv_img_dsc_t *jolt_gui_qr_to_img(QRCode *qrcode) {
         }
     }
 
-    lv_img_dsc_t *qrcode_img = calloc(1, sizeof(lv_img_dsc_t));
+    lv_img_dsc_t *qrcode_img = lv_mem_alloc(sizeof(lv_img_dsc_t));
     qrcode_img->header.always_zero = 0;
     qrcode_img->header.w = qrcode->size;
     qrcode_img->header.h = qrcode->size;
@@ -36,9 +36,16 @@ lv_img_dsc_t *jolt_gui_qr_to_img(QRCode *qrcode) {
     return qrcode_img;
 }
 
-static lv_action_t delete_screen(lv_obj_t *pin_screen) {
+static lv_action_t delete_screen(lv_obj_t *btn) {
+    // free memory use by img
+    lv_obj_t *img = lv_obj_get_parent(btn);
+    lv_img_ext_t *ext = lv_obj_get_ext_attr(img);
+    uint8_t *data = ((lv_img_dsc_t *)(ext->src))->data;
+
+    lv_img_set_src( img, NULL );
+    free(data);
+
     jolt_gui_delete_current_screen();
-    // todo: somehow free memory here
     return 0;
 }
 static lv_action_t dummy(lv_obj_t *pin_screen) {
@@ -63,7 +70,10 @@ lv_obj_t *jolt_gui_qr_fullscreen_create(lv_img_dsc_t *qrcode_img,
     lv_group_focus_obj(parent);
 
     jolt_gui_set_enter_action(parent, dummy);
-    jolt_gui_set_back_action(parent, delete_screen);
+
+    /* Set img as parent of back action so that we can easily get img
+     * attributes while deleting */
+    jolt_gui_set_back_action(img, delete_screen);
 
     jolt_gui_title_create(parent, title);
 
