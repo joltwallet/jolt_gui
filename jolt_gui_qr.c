@@ -48,9 +48,6 @@ static lv_action_t delete_screen(lv_obj_t *btn) {
     jolt_gui_delete_current_screen();
     return 0;
 }
-static lv_action_t dummy(lv_obj_t *pin_screen) {
-    return 0;
-}
 
 lv_obj_t *jolt_gui_qr_fullscreen_create(lv_img_dsc_t *qrcode_img, 
         uint8_t scale, const char *title) {
@@ -69,7 +66,7 @@ lv_obj_t *jolt_gui_qr_fullscreen_create(lv_img_dsc_t *qrcode_img,
     lv_group_add_obj(jolt_gui_store.group.main, parent);
     lv_group_focus_obj(parent);
 
-    jolt_gui_set_enter_action(parent, dummy);
+    jolt_gui_set_enter_action(parent, NULL);
 
     /* Set img as parent of back action so that we can easily get img
      * attributes while deleting */
