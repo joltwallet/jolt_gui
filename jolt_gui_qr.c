@@ -63,12 +63,12 @@ static lv_obj_t *jolt_gui_qr_fullscreen_create( const char *title,
     lv_obj_t *parent = jolt_gui_parent_create();
     if( NULL == parent ) goto exit;
 
-    lv_obj_align(parent, jolt_gui_store.statusbar.container, 
-            LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
 
     lv_obj_t *cont = lv_cont_create(parent, NULL);
     if( NULL == cont ) goto exit;
     lv_obj_set_size(cont, LV_HOR_RES, LV_VER_RES-CONFIG_JOLT_GUI_STATUSBAR_H);
+    lv_obj_align(cont, jolt_gui_store.statusbar.container, 
+            LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
 
     lv_obj_t *img = lv_img_create(cont, NULL);
     if( NULL == img ) goto exit;

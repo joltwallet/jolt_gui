@@ -69,6 +69,7 @@ lv_action_t jolt_gui_delete_current_screen() {
     return 0;
 }
 
+/* Creates a dummy invisible object to anchor lvgl objects on the screen */
 lv_obj_t *jolt_gui_parent_create() {
     lv_obj_t *parent = lv_obj_create(lv_scr_act(), NULL);
     lv_obj_set_size(parent, LV_HOR_RES, LV_VER_RES);
