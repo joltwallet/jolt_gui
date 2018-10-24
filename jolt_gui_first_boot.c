@@ -110,7 +110,7 @@ static lv_action_t screen_finish_create(lv_obj_t *num) {
     }
     else{
         sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
-        jolt_gui_text_create("Pin Setup", 
+        jolt_gui_scr_text_create("Pin Setup", 
                 "Pin Mismatch! Please try again.");
     }
 
@@ -137,7 +137,7 @@ static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
         char buf[15] = { 0 }; // todo define
         get_nth_word(buf, sizeof(buf), mnemonic, i);
         if( i == 0 ) {
-            scr = jolt_gui_menu_create(title, NULL,
+            scr = jolt_gui_scr_menu_create(title, NULL,
                     buf, NULL);
             // debug: move this to else statement
             lv_list_add(scr, NULL, "continue",
@@ -160,10 +160,10 @@ static lv_action_t dummy(lv_obj_t *obj){
 void jolt_gui_first_boot_create() {
     generate_mnemonic();
 
-    lv_obj_t *scr = jolt_gui_text_create( "First Startup",
+    lv_obj_t *scr = jolt_gui_scr_text_create( "First Startup",
             "Welcome to Jolt, "
             "please backup the following secret mnemonic.");
-    jolt_gui_set_enter_action(scr, &screen_mnemonic_create);
-    jolt_gui_set_back_action(scr, &dummy);
+    jolt_gui_scr_set_enter_action(scr, &screen_mnemonic_create);
+    jolt_gui_scr_set_back_action(scr, &dummy);
 }
 

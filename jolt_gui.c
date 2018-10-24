@@ -78,7 +78,7 @@ lv_obj_t *jolt_gui_parent_create() {
     return parent;
 }
 
-lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src, 
+lv_obj_t *jolt_gui_scr_menu_create(const char *title, const void *img_src, 
         const char *txt, lv_action_t rel_action) {
     lv_obj_t *parent = jolt_gui_parent_create();
 
@@ -93,19 +93,19 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
     lv_group_focus_obj(menu);
 
     /* Create and Stylize Statusbar Title */
-    jolt_gui_title_create(parent, title);
+    jolt_gui_obj_title_create(parent, title);
 
-    jolt_gui_set_enter_action(parent, jolt_gui_send_enter_main);
-    jolt_gui_set_back_action(parent, jolt_gui_delete_current_screen);
+    jolt_gui_scr_set_enter_action(parent, jolt_gui_send_enter_main);
+    jolt_gui_scr_set_back_action(parent, jolt_gui_delete_current_screen);
     return menu;
 }
 
-lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
+lv_obj_t *jolt_gui_scr_text_create(const char *title, const char *body) {
     /* Creates a page with scrollable text */
     lv_obj_t *parent = jolt_gui_parent_create();
     /* Create Statusbar Title */
     if( NULL != title ) {
-        jolt_gui_title_create(parent, title);
+        jolt_gui_obj_title_create(parent, title);
     }
 
     /* Create Page */
@@ -130,14 +130,14 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
 
     lv_group_focus_obj(page);
 
-    jolt_gui_set_back_action(parent, jolt_gui_delete_current_screen);
-    jolt_gui_set_enter_action(parent, NULL);
+    jolt_gui_scr_set_back_action(parent, jolt_gui_delete_current_screen);
+    jolt_gui_scr_set_enter_action(parent, NULL);
 
     return parent;
 }
 
-lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title) {
-    /* Creates the statusbar title label */
+/* Creates the statusbar title label for a screen */
+lv_obj_t *jolt_gui_obj_title_create(lv_obj_t *parent, const char *title) {
     if( NULL == parent ) {
         parent = lv_scr_act();
     }
@@ -175,7 +175,7 @@ void jolt_gui_group_create() {
     lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
 }
 
-lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb) {
+lv_obj_t *jolt_gui_scr_set_back_action(lv_obj_t *parent, lv_action_t cb) {
     if( NULL == parent ) {
         parent = lv_scr_act();
     }
@@ -188,7 +188,7 @@ lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb) {
     return btn;
 }
 
-lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
+lv_obj_t *jolt_gui_scr_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
     if( NULL == parent ) {
         parent = lv_scr_act();
     }

@@ -23,12 +23,12 @@ static const char TAG[] = "menu_settings";
 static lv_action_t menu_wifi_details_create(lv_action_t *btn) {
     char new_ap_info[45];
     get_ap_info(new_ap_info, sizeof(new_ap_info));
-    lv_obj_t *t = jolt_gui_text_create("WiFi Details", new_ap_info);
+    lv_obj_t *t = jolt_gui_scr_text_create("WiFi Details", new_ap_info);
     return 0;
 }
 
 static lv_action_t menu_factory_reset_create(lv_obj_t *btn) {
-    lv_obj_t *l = jolt_gui_menu_create("Factory Reset?",  NULL, "No", NULL);
+    lv_obj_t *l = jolt_gui_scr_menu_create("Factory Reset?",  NULL, "No", NULL);
     lv_list_add(l, NULL, "Yes", NULL);
     //storage_factory_reset();
     return 0;
@@ -57,7 +57,7 @@ static lv_action_t menu_screen_brightness_create() {
 lv_action_t menu_settings_create(lv_obj_t *btn) {
     //ESP_LOGI(TAG, "meow");
     printf("menu settings\n");
-    lv_obj_t *l = jolt_gui_menu_create("Settings",  NULL, 
+    lv_obj_t *l = jolt_gui_scr_menu_create("Settings",  NULL, 
             "WiFi", menu_wifi_details_create);
     lv_list_add(l, NULL, "Screen Brightness", menu_screen_brightness_create);
     lv_list_add(l, NULL, "Bluetooth", NULL);

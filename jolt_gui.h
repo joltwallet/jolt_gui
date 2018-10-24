@@ -59,25 +59,25 @@ void jolt_gui_group_create();
 
 /* Creates a title in the top left statusbar. 
  * Allocates and copies the title string. */
-lv_obj_t *jolt_gui_title_create(lv_obj_t *parent, const char *title);
+lv_obj_t *jolt_gui_obj_title_create(lv_obj_t *parent, const char *title);
 
 /* Creates a submenu of correct size, location, group, and infocus. 
  * Need to provide arguments for first element so focus works correctly.*/
-lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src, 
+lv_obj_t *jolt_gui_scr_menu_create(const char *title, const void *img_src, 
         const char *txt, lv_action_t rel_action);
 
 /* Creates a parent object for a new screen thats easy to delete */
 lv_obj_t *jolt_gui_parent_create();
 
 /* Deletes the container of the currently focused object */
-lv_action_t jolt_gui_delete_current_screen();
+lv_action_t jolt_gui_delete_current_screen(); //todo change this
 
 /* Display Text; Pressing any button returns to previous screen */
-lv_obj_t *jolt_gui_text_create(const char *title, const char *body);
+lv_obj_t *jolt_gui_scr_text_create(const char *title, const char *body);
 
 /* Calls cb whenever the back button is pressed */
-lv_obj_t *jolt_gui_set_back_action(lv_obj_t *parent, lv_action_t cb);
-lv_obj_t *jolt_gui_set_enter_action(lv_obj_t *parent, lv_action_t cb);
+lv_obj_t *jolt_gui_scr_set_back_action(lv_obj_t *parent, lv_action_t cb);
+lv_obj_t *jolt_gui_scr_set_enter_action(lv_obj_t *parent, lv_action_t cb);
 
 lv_action_t jolt_gui_send_enter_main(lv_obj_t *btn);
 lv_action_t jolt_gui_send_left_main(lv_obj_t *btn);

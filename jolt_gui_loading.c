@@ -12,7 +12,7 @@ lv_obj_t *jolt_gui_loading_create(const char *title) {
     lv_obj_t *parent = jolt_gui_parent_create();
 
     /* Create Title */
-    lv_obj_t *title_label = jolt_gui_title_create(parent, title);
+    lv_obj_t *title_label = jolt_gui_obj_title_create(parent, title);
 
     /* Create Container */
     lv_obj_t *cont = lv_cont_create(parent, NULL);

@@ -19,11 +19,6 @@ static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn);
 static const char TAG[] = "menu_home";
 
 
-static lv_action_t woof(lv_obj_t btn) {
-    printf("woof\n");
-    return 0;
-}
-
 static lv_action_t back_release_action(lv_obj_t *btn) {
     jolt_gui_delete_current_screen();
     return 0;
@@ -74,7 +69,7 @@ void jolt_gui_menu_home_create() {
 
         if( n_fns > 0 ) {
             ESP_LOGI(TAG, "Registering App \"%s\" into the GUI", fns[0]);
-            jolt_gui_store.main_menu_list = jolt_gui_menu_create(TITLE, NULL, fns[0], launch_file_proxy);
+            jolt_gui_store.main_menu_list = jolt_gui_scr_menu_create(TITLE, NULL, fns[0], launch_file_proxy);
             for(uint16_t i=1; i<n_fns; i++) {
                 ESP_LOGD(TAG, "Registering App \"%s\" into the GUI", fns[i]);
                 lv_list_add(jolt_gui_store.main_menu_list, NULL, fns[i], launch_file_proxy);
@@ -82,7 +77,7 @@ void jolt_gui_menu_home_create() {
             lv_list_add(jolt_gui_store.main_menu_list, NULL, "Settings", menu_settings_create);
         }
         else {
-            jolt_gui_store.main_menu_list = jolt_gui_menu_create(TITLE, NULL, "Settings", menu_settings_create);
+            jolt_gui_store.main_menu_list = jolt_gui_scr_menu_create(TITLE, NULL, "Settings", menu_settings_create);
         }
 
         lv_list_add(jolt_gui_store.main_menu_list, NULL, "QR", jolt_gui_test_qrcode_create);

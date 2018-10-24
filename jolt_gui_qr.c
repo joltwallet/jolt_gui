@@ -81,10 +81,10 @@ static lv_obj_t *jolt_gui_qr_fullscreen_create( const char *title,
 
     /* Set img as parent of back action so that we can easily get img
      * attributes while deleting */
-    if( NULL == jolt_gui_set_back_action(img, delete_screen) ) goto exit;
-    if( NULL == jolt_gui_set_enter_action(parent, NULL) ) goto exit;
+    if( NULL == jolt_gui_scr_set_back_action(img, delete_screen) ) goto exit;
+    if( NULL == jolt_gui_scr_set_enter_action(parent, NULL) ) goto exit;
 
-    if( NULL == jolt_gui_title_create(parent, title) ) goto exit;
+    if( NULL == jolt_gui_obj_title_create(parent, title) ) goto exit;
 
     return parent;
 exit:

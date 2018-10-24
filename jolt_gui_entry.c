@@ -306,14 +306,14 @@ lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp,
     lv_group_add_obj(jolt_gui_store.group.main, numeric);
     lv_group_focus_obj(numeric);
 
-    jolt_gui_set_enter_action(parent, &jolt_gui_send_enter_main);
-    jolt_gui_set_back_action(parent, &jolt_gui_send_left_main);
+    jolt_gui_scr_set_enter_action(parent, &jolt_gui_send_enter_main);
+    jolt_gui_scr_set_back_action(parent, &jolt_gui_send_left_main);
 
     //todo: set fwd and back cb
     jolt_gui_num_set_enter_action(numeric, cb);
     jolt_gui_num_set_back_action(numeric, delete_screen);
 
-    jolt_gui_title_create(parent, title);
+    jolt_gui_obj_title_create(parent, title);
 
     return parent;
 }
