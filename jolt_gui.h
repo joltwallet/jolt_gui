@@ -70,7 +70,7 @@ lv_obj_t *jolt_gui_menu_create(const char *title, const void *img_src,
 lv_obj_t *jolt_gui_parent_create();
 
 /* Deletes the container of the currently focused object */
-bool jolt_gui_delete_current_screen();
+lv_action_t jolt_gui_delete_current_screen();
 
 /* Display Text; Pressing any button returns to previous screen */
 lv_obj_t *jolt_gui_text_create(const char *title, const char *body);

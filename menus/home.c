@@ -99,8 +99,10 @@ void jolt_gui_menu_home_create() {
 }
 
 static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
-    const char buf[] = "meow";
+    const char data[] = "Meow";
+    jolt_gui_scr_qr_create("QR Test", "Meow", sizeof(data));
 
+#if 0
     QRCode qrcode;
     // qrcode_bytes is referenced in QRCode
     uint8_t qrcode_bytes[qrcode_getBufferSize(CONFIG_JOLT_QR_VERSION)];
@@ -112,5 +114,6 @@ static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
 
     // todo: free the img buffer
     //
+#endif
 	return 0;
 }

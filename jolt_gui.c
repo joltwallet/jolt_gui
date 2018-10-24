@@ -36,7 +36,12 @@
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-bool jolt_gui_delete_current_screen() {
+#if 0
+lv_action_t jolt_gui_delete_current_screen(lv_obj_t *btn) {
+}
+#endif
+
+lv_action_t jolt_gui_delete_current_screen() {
     lv_obj_t *scrn = lv_group_get_focused(jolt_gui_store.group.main);
     if( NULL == scrn ) {
         MSG("Nothing in focus\n");
@@ -56,12 +61,12 @@ bool jolt_gui_delete_current_screen() {
             parent = tmp;
         }
         if( tmp == jolt_gui_store.main_menu_list ) {
-            return false;
+            return 0;
         }
     }
     MSG("deleting %p\n", parent);
     lv_obj_del(parent);
-    return true;
+    return 0;
 }
 
 lv_obj_t *jolt_gui_parent_create() {
@@ -125,6 +130,7 @@ lv_obj_t *jolt_gui_text_create(const char *title, const char *body) {
     lv_group_focus_obj(page);
 
     jolt_gui_set_back_action(parent, jolt_gui_delete_current_screen);
+    jolt_gui_set_enter_action(parent, NULL);
 
     return parent;
 }
