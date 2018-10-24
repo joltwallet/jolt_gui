@@ -83,7 +83,8 @@ lv_obj_t *jolt_gui_scr_menu_create(const char *title) {
     lv_list_set_sb_mode(menu, LV_SB_MODE_AUTO);
     lv_obj_align(menu, NULL, 
             LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
-    lv_group_add_obj(jolt_gui_store.group.main, menu);
+    //lv_group_add_obj(jolt_gui_store.group.main, menu);
+    //lv_group_focus_obj(menu);
 
     /* Create and Stylize Statusbar Title */
     jolt_gui_obj_title_create(parent, title);
@@ -109,7 +110,12 @@ lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
 
     lv_obj_t *res = lv_list_add(child, img_src, txt, rel_action);
 
-    lv_group_focus_obj(child);
+    /* Add the list to the group after the first element has been added
+     * so that the first item is properly highlighted. */
+    if( NULL == lv_obj_get_group(child) ) {
+        lv_group_add_obj(jolt_gui_store.group.main, child);
+        lv_group_focus_obj(child);
+    }
 
     return res;
 }
