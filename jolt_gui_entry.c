@@ -298,10 +298,11 @@ static lv_action_t delete_screen(lv_obj_t *pin_screen) {
 lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp, 
         const char *title, lv_action_t cb) {
     lv_obj_t *parent = jolt_gui_parent_create();
-    lv_obj_align(parent, jolt_gui_store.statusbar.container, 
-            LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
+
     lv_obj_t *numeric = jolt_gui_num_create(parent, NULL);
     jolt_gui_num_set_len(numeric, len);
+    lv_obj_align(numeric, jolt_gui_store.statusbar.container, 
+            LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
 
     lv_group_add_obj(jolt_gui_store.group.main, numeric);
     lv_group_focus_obj(numeric);

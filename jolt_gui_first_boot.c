@@ -150,11 +150,6 @@ static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
     return 0;
 }
 
-static lv_action_t dummy(lv_obj_t *obj){
-    printf("dummy\n");
-    return 0;
-}
-
 /* Called externally to begin the first-boot GUI */
 void jolt_gui_first_boot_create() {
     generate_mnemonic();
@@ -163,6 +158,6 @@ void jolt_gui_first_boot_create() {
             "Welcome to Jolt, "
             "please backup the following secret mnemonic.");
     jolt_gui_scr_set_enter_action(scr, &screen_mnemonic_create);
-    jolt_gui_scr_set_back_action(scr, &dummy);
+    jolt_gui_scr_set_back_action(scr, NULL);
 }
 
