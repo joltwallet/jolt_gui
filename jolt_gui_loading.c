@@ -1,6 +1,7 @@
 #include "jolt_gui.h"
 #include "jolt_gui_loading.h"
 
+/* Update the loading screen */
 void jolt_gui_loading_update(uint8_t percentage, const char *text) {
 	lv_bar_set_value_anim(jolt_gui_store.loading.bar, percentage,
             CONFIG_JOLT_GUI_LOADING_BAR_ANIM_MS);
@@ -8,7 +9,7 @@ void jolt_gui_loading_update(uint8_t percentage, const char *text) {
 }
 
 /* Create the loading object before initiating the task */
-lv_obj_t *jolt_gui_loading_create(const char *title) {
+lv_obj_t *jolt_gui_scr_loading_create(const char *title) {
     lv_obj_t *parent = jolt_gui_parent_create();
 
     /* Create Title */

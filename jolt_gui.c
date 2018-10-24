@@ -195,30 +195,43 @@ void jolt_gui_group_create() {
     lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
 }
 
-lv_obj_t *jolt_gui_scr_set_back_action(lv_obj_t *parent, lv_action_t cb) {
+static lv_obj_t *jolt_gui_scr_set_action(lv_obj_t *parent, lv_action_t cb, 
+        lv_group_t *g) {
     if( NULL == parent ) {
         parent = lv_scr_act();
+    }
+    else {
+        // Remove any children already in group g
+        lv_obj_t *child = NULL;
+        lv_obj_type_t obj_type;
+        while( NULL != (child = lv_obj_get_child(parent, child)) ) {
+            memset(&obj_type, 0, sizeof(lv_obj_type_t));
+            lv_obj_get_type(child, &obj_type);
+            printf("child: %p\n", child);
+            printf("obj_type %s \n", obj_type.type[0]);
+            if(strcmp("lv_btn", obj_type.type[0]) && g==lv_obj_get_group(child) ) {
+                lv_obj_del(child);
+                child = NULL;
+            }
+        }
     }
     lv_obj_t *btn = lv_btn_create(parent, NULL);
     lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, cb);
     lv_obj_set_size(btn, 0, 0);
     lv_group_remove_obj(btn);
-    lv_group_add_obj(jolt_gui_store.group.back, btn);
+
+    lv_group_add_obj(g, btn);
     lv_group_focus_obj(btn);
-    return btn;
+
+    return parent;
+}
+
+lv_obj_t *jolt_gui_scr_set_back_action(lv_obj_t *parent, lv_action_t cb) {
+    return jolt_gui_scr_set_action(parent, cb, jolt_gui_store.group.back);
 }
 
 lv_obj_t *jolt_gui_scr_set_enter_action(lv_obj_t *parent, lv_action_t cb) {
-    if( NULL == parent ) {
-        parent = lv_scr_act();
-    }
-    lv_obj_t *btn = lv_btn_create(parent, NULL);
-    lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, cb);
-    lv_obj_set_size(btn, 0, 0);
-    lv_group_remove_obj(btn);
-    lv_group_add_obj(jolt_gui_store.group.enter, btn);
-    lv_group_focus_obj(btn);
-    return btn;
+    return jolt_gui_scr_set_action(parent, cb, jolt_gui_store.group.enter);
 }
 
 lv_action_t jolt_gui_send_enter_main(lv_obj_t *btn) {
