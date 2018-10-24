@@ -63,7 +63,10 @@ lv_obj_t *jolt_gui_obj_title_create(lv_obj_t *parent, const char *title);
 
 /* Creates a submenu of correct size, location, group, and infocus. 
  * Need to provide arguments for first element so focus works correctly.*/
-lv_obj_t *jolt_gui_scr_menu_create(const char *title, const void *img_src, 
+lv_obj_t *jolt_gui_scr_menu_create(const char *title);
+
+/* Adds an item to a Jolt Menu Screen */
+lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
         const char *txt, lv_action_t rel_action);
 
 /* Creates a parent object for a new screen thats easy to delete */

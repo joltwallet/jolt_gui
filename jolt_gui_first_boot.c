@@ -132,19 +132,18 @@ static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
 
 static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
     const char title[] = "Write Down Mnemonic!";
-    lv_obj_t *scr = NULL;
+    lv_obj_t *scr = jolt_gui_scr_menu_create(title);
     for(uint8_t i=0; i < 24; i++) {
         char buf[15] = { 0 }; // todo define
         get_nth_word(buf, sizeof(buf), mnemonic, i);
         if( i == 0 ) {
-            scr = jolt_gui_scr_menu_create(title, NULL,
-                    buf, NULL);
+            jolt_gui_scr_menu_add(scr, NULL, buf, NULL);
             // debug: move this to else statement
-            lv_list_add(scr, NULL, "continue",
+            jolt_gui_scr_menu_add(scr, NULL, "continue",
                     &screen_pin_entry_create);
         }
         else {
-            lv_list_add(scr, NULL, buf, NULL);
+            jolt_gui_scr_menu_add(scr, NULL, buf, NULL);
         }
     }
 

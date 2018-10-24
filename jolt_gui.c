@@ -36,10 +36,6 @@
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-#if 0
-lv_action_t jolt_gui_delete_current_screen(lv_obj_t *btn) {
-}
-#endif
 
 lv_action_t jolt_gui_delete_current_screen() {
     lv_obj_t *scrn = lv_group_get_focused(jolt_gui_store.group.main);
@@ -78,8 +74,7 @@ lv_obj_t *jolt_gui_parent_create() {
     return parent;
 }
 
-lv_obj_t *jolt_gui_scr_menu_create(const char *title, const void *img_src, 
-        const char *txt, lv_action_t rel_action) {
+lv_obj_t *jolt_gui_scr_menu_create(const char *title) {
     lv_obj_t *parent = jolt_gui_parent_create();
 
     /* Create List */
@@ -88,16 +83,35 @@ lv_obj_t *jolt_gui_scr_menu_create(const char *title, const void *img_src,
     lv_list_set_sb_mode(menu, LV_SB_MODE_AUTO);
     lv_obj_align(menu, NULL, 
             LV_ALIGN_IN_TOP_LEFT, 0, CONFIG_JOLT_GUI_STATUSBAR_H);
-    lv_list_add(menu, img_src, txt, rel_action);
     lv_group_add_obj(jolt_gui_store.group.main, menu);
-    lv_group_focus_obj(menu);
 
     /* Create and Stylize Statusbar Title */
     jolt_gui_obj_title_create(parent, title);
 
     jolt_gui_scr_set_enter_action(parent, jolt_gui_send_enter_main);
     jolt_gui_scr_set_back_action(parent, jolt_gui_delete_current_screen);
-    return menu;
+    return parent;
+}
+
+/* Adds an item to a Jolt Menu Screen */
+lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
+        const char *txt, lv_action_t rel_action) {
+    lv_obj_t *child = NULL;
+    lv_obj_type_t obj_type;
+    do {
+        child = lv_obj_get_child_back(par, child); //the menu should be the first child
+        if ( NULL == child ) {
+            // cannot find the child list
+            return NULL;
+        }
+        lv_obj_get_type(child, &obj_type);
+    } while(strcmp("lv_list", obj_type.type[0]));
+
+    lv_obj_t *res = lv_list_add(child, img_src, txt, rel_action);
+
+    lv_group_focus_obj(child);
+
+    return res;
 }
 
 lv_obj_t *jolt_gui_scr_text_create(const char *title, const char *body) {

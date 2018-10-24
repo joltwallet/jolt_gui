@@ -28,8 +28,9 @@ static lv_action_t menu_wifi_details_create(lv_action_t *btn) {
 }
 
 static lv_action_t menu_factory_reset_create(lv_obj_t *btn) {
-    lv_obj_t *l = jolt_gui_scr_menu_create("Factory Reset?",  NULL, "No", NULL);
-    lv_list_add(l, NULL, "Yes", NULL);
+    lv_obj_t *scr = jolt_gui_scr_menu_create("Factory Reset?");
+    jolt_gui_scr_menu_add(scr, NULL, "No", NULL);
+    jolt_gui_scr_menu_add(scr, NULL, "Yes", NULL);
     //storage_factory_reset();
     return 0;
 }
@@ -55,14 +56,12 @@ static lv_action_t menu_screen_brightness_create() {
 }
 
 lv_action_t menu_settings_create(lv_obj_t *btn) {
-    //ESP_LOGI(TAG, "meow");
-    printf("menu settings\n");
-    lv_obj_t *l = jolt_gui_scr_menu_create("Settings",  NULL, 
-            "WiFi", menu_wifi_details_create);
-    lv_list_add(l, NULL, "Screen Brightness", menu_screen_brightness_create);
-    lv_list_add(l, NULL, "Bluetooth", NULL);
-    lv_list_add(l, NULL, "Long Option Name Scrolls", NULL);
-    lv_list_add(l, NULL, "Factory Reset", menu_factory_reset_create);
+    lv_obj_t *scr = jolt_gui_scr_menu_create("Settings");
+    jolt_gui_scr_menu_add(scr, NULL, "WiFi", menu_wifi_details_create);
+    jolt_gui_scr_menu_add(scr, NULL, "Screen Brightness", menu_screen_brightness_create);
+    jolt_gui_scr_menu_add(scr, NULL, "Bluetooth", NULL);
+    jolt_gui_scr_menu_add(scr, NULL, "Long Option Name Scrolls", NULL);
+    jolt_gui_scr_menu_add(scr, NULL, "Factory Reset", menu_factory_reset_create);
     return 0;
 }
 
