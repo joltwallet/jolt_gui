@@ -1,15 +1,18 @@
 #include "jolt_gui.h"
 #include "jolt_gui_loading.h"
 
-/* Update the loading screen */
-void jolt_gui_scr_loading_update(lv_obj_t *parent, uint8_t percentage, const char *text) {
+/* Update the loading screen.
+ * Title and Text are optional.*/
+void jolt_gui_scr_loading_update(lv_obj_t *parent,
+        const char *title, const char *text,
+        uint8_t percentage) {
     // get the bar children
     lv_obj_t *child = NULL;
     lv_obj_type_t obj_type;
     lv_obj_t *cont = NULL;
     lv_obj_t *bar = NULL;
-    lv_obj_t *label = NULL;
-    lv_obj_t *title = NULL;
+    lv_obj_t *loading_label = NULL;
+    lv_obj_t *title_label = NULL;
 
     xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
 	while( NULL != (child = lv_obj_get_child(parent, child)) ) {
@@ -19,7 +22,7 @@ void jolt_gui_scr_loading_update(lv_obj_t *parent, uint8_t percentage, const cha
 		}
         else if( 0 == strcmp("lv_label", obj_type.type[0]) ) {
             // this might be the title
-            title = child;
+            title_label = child;
         }
 	}
 	while( NULL != (child = lv_obj_get_child(cont, child)) ) {
@@ -29,12 +32,17 @@ void jolt_gui_scr_loading_update(lv_obj_t *parent, uint8_t percentage, const cha
 		}
         else if( 0 == strcmp("lv_label", obj_type.type[0]) ) {
             // this might be the title
-            label = child;
+            loading_label = child;
         }
 	}
 
 	lv_bar_set_value_anim(bar, percentage, CONFIG_JOLT_GUI_LOADING_BAR_ANIM_MS);
-    lv_label_set_text(label, text);
+    if( text ) {
+        lv_label_set_text(loading_label, text);
+    }
+    if( title ) {
+        lv_label_set_text(title_label, title);
+    }
     xSemaphoreGive( jolt_gui_store.mutex );
 }
 

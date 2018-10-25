@@ -18,7 +18,9 @@
 #endif
 
 lv_obj_t *jolt_gui_scr_loading_create(const char *title);
-void jolt_gui_scr_loading_update(lv_obj_t *parent, uint8_t percentage, const char *text);
 
+void jolt_gui_scr_loading_update(lv_obj_t *parent,
+        const char *title, const char *text,
+        uint8_t percentage);
 
 #endif
