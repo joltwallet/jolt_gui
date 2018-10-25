@@ -2,10 +2,40 @@
 #include "jolt_gui_loading.h"
 
 /* Update the loading screen */
-void jolt_gui_loading_update(uint8_t percentage, const char *text) {
-	lv_bar_set_value_anim(jolt_gui_store.loading.bar, percentage,
-            CONFIG_JOLT_GUI_LOADING_BAR_ANIM_MS);
-    lv_label_set_text(jolt_gui_store.loading.label, text);
+void jolt_gui_scr_loading_update(lv_obj_t *parent, uint8_t percentage, const char *text) {
+    // get the bar children
+    lv_obj_t *child = NULL;
+    lv_obj_type_t obj_type;
+    lv_obj_t *cont = NULL;
+    lv_obj_t *bar = NULL;
+    lv_obj_t *label = NULL;
+    lv_obj_t *title = NULL;
+
+    xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
+	while( NULL != (child = lv_obj_get_child(parent, child)) ) {
+		lv_obj_get_type(child, &obj_type);
+		if( 0 == strcmp("lv_cont", obj_type.type[0]) ) {
+            cont = child;
+		}
+        else if( 0 == strcmp("lv_label", obj_type.type[0]) ) {
+            // this might be the title
+            title = child;
+        }
+	}
+	while( NULL != (child = lv_obj_get_child(cont, child)) ) {
+		lv_obj_get_type(child, &obj_type);
+		if( 0 == strcmp("lv_bar", obj_type.type[0]) ) {
+            bar = child;
+		}
+        else if( 0 == strcmp("lv_label", obj_type.type[0]) ) {
+            // this might be the title
+            label = child;
+        }
+	}
+
+	lv_bar_set_value_anim(bar, percentage, CONFIG_JOLT_GUI_LOADING_BAR_ANIM_MS);
+    lv_label_set_text(label, text);
+    xSemaphoreGive( jolt_gui_store.mutex );
 }
 
 /* Create the loading object before initiating the task */
@@ -23,25 +53,24 @@ lv_obj_t *jolt_gui_scr_loading_create(const char *title) {
             0, CONFIG_JOLT_GUI_STATUSBAR_H);
 
     /* Create Loading Bar */
-    jolt_gui_store.loading.bar = lv_bar_create(cont, NULL);
-	lv_obj_set_size(jolt_gui_store.loading.bar, 
+    lv_obj_t *bar = lv_bar_create(cont, NULL);
+	lv_obj_set_size(bar, 
             CONFIG_JOLT_GUI_LOADING_BAR_W, CONFIG_JOLT_GUI_LOADING_BAR_H);
-	lv_obj_align(jolt_gui_store.loading.bar, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -10);
-	lv_bar_set_value(jolt_gui_store.loading.bar, 1);
+	lv_obj_align(bar, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -10);
+	lv_bar_set_value(bar, 1);
 
     lv_group_add_obj(jolt_gui_store.group.main, cont);
     lv_group_focus_obj(cont);
 
     /* Create Loading Label */
-    jolt_gui_store.loading.label = lv_label_create(cont, NULL);
-    lv_label_set_align(jolt_gui_store.loading.label, LV_LABEL_ALIGN_CENTER);
-    lv_label_set_text(jolt_gui_store.loading.label, "Initializing");
-    lv_label_set_long_mode(jolt_gui_store.loading.label, LV_LABEL_LONG_ROLL);
-    lv_style_t *label_style = lv_obj_get_style(jolt_gui_store.loading.label);
-    lv_obj_set_size(jolt_gui_store.loading.label, CONFIG_JOLT_GUI_LOADING_TEXT_W,
+    lv_obj_t *label = lv_label_create(cont, NULL);
+    lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
+    lv_label_set_text(label, "Initializing");
+    lv_label_set_long_mode(label, LV_LABEL_LONG_ROLL);
+    lv_style_t *label_style = lv_obj_get_style(label);
+    lv_obj_set_size(label, CONFIG_JOLT_GUI_LOADING_TEXT_W,
             label_style->text.font->h_px);
-	lv_obj_align(jolt_gui_store.loading.label, jolt_gui_store.loading.bar, 
-            LV_ALIGN_OUT_TOP_MID, 0, -10);
+	lv_obj_align(label, bar, LV_ALIGN_OUT_TOP_MID, 0, -10);
 
     return parent;
 }

@@ -12,6 +12,7 @@
  *  STATIC PROTOTYPES
  **********************/
 static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn);
+static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
@@ -72,14 +73,19 @@ void jolt_gui_menu_home_create() {
         }
         jolt_h_free_char_array(fns, n_fns);
 
+#if JOLT_GUI_TEST_MENU
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Settings", menu_settings_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "QR", jolt_gui_test_qrcode_create);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 1", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Loading", jolt_gui_test_loading_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 2", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 3", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 4", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 5", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 6", NULL);
+#else
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Settings", menu_settings_create);
+#endif
+
     }
 #endif
 }
@@ -87,19 +93,21 @@ void jolt_gui_menu_home_create() {
 static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
     const char data[] = "Meow";
     jolt_gui_scr_qr_create("QR Test", "Meow", sizeof(data));
-
-#if 0
-    QRCode qrcode;
-    // qrcode_bytes is referenced in QRCode
-    uint8_t qrcode_bytes[qrcode_getBufferSize(CONFIG_JOLT_QR_VERSION)];
-    qrcode_initText(&qrcode, qrcode_bytes, CONFIG_JOLT_QR_VERSION,
-                        ECC_LOW, buf);
-
-	lv_img_dsc_t *img = jolt_gui_qr_to_img_dsc(&qrcode);
-	lv_obj_t *scr = jolt_gui_qr_fullscreen_create(img, 1, "QR Test");
-
-    // todo: free the img buffer
-    //
-#endif
 	return 0;
+}
+
+static void test_loading_task(void *param) {
+    lv_obj_t *scr = (lv_obj_t *)param;
+    for(uint8_t i=0;i < 101;vTaskDelay(pdMS_TO_TICKS(1000)), i+=10){
+        jolt_gui_scr_loading_update(scr, i, "meow");
+    }
+    vTaskDelete(NULL);
+}
+
+static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn) {
+    lv_obj_t *scr = jolt_gui_scr_loading_create("Loading Test");
+    xTaskCreate(test_loading_task,
+                "TestLoading", 28000,
+                (void *) scr, 10, NULL);
+    return 0;
 }

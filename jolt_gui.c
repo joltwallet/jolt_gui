@@ -205,10 +205,7 @@ static lv_obj_t *jolt_gui_scr_set_action(lv_obj_t *parent, lv_action_t cb,
         lv_obj_t *child = NULL;
         lv_obj_type_t obj_type;
         while( NULL != (child = lv_obj_get_child(parent, child)) ) {
-            memset(&obj_type, 0, sizeof(lv_obj_type_t));
             lv_obj_get_type(child, &obj_type);
-            printf("child: %p\n", child);
-            printf("obj_type %s \n", obj_type.type[0]);
             if(strcmp("lv_btn", obj_type.type[0]) && g==lv_obj_get_group(child) ) {
                 lv_obj_del(child);
                 child = NULL;
