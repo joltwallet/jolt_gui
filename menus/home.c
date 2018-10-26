@@ -86,8 +86,7 @@ void jolt_gui_menu_home_create() {
 }
 
 static lv_action_t jolt_gui_test_number_create(lv_obj_t *btn) {
-    jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
-            JOLT_GUI_NO_DECIMAL, "Number Test", jolt_gui_scr_del); 
+    jolt_gui_scr_num_create( "Number Test", 4, 2, jolt_gui_scr_del); 
     return 0;
 }
 

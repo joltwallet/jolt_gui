@@ -144,7 +144,7 @@ void jolt_gui_num_set_len(lv_obj_t *num, uint8_t n) {
     jolt_gui_num_align(num);
 }
 
-void jolt_gui_num_set_decimal(lv_obj_t *num, uint8_t pos) {
+void jolt_gui_num_set_decimal(lv_obj_t *num, int8_t pos) {
     jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
     ext->decimal = pos;
     /* Align the decimal point */
@@ -299,8 +299,8 @@ void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb){
  * Within Jolt, you usually call this function because it creates the typical
  * numerical entry setup.
  */
-lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp, 
-        const char *title, lv_action_t cb) {
+lv_obj_t *jolt_gui_scr_num_create(const char *title,
+        uint8_t len, int8_t dp, lv_action_t cb) {
     lv_obj_t *parent = jolt_gui_parent_create();
 
     lv_obj_t *numeric = jolt_gui_num_create(parent, NULL);
@@ -308,13 +308,16 @@ lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp,
     lv_obj_align(numeric, jolt_gui_store.statusbar.container, 
             LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
 
+    jolt_gui_num_set_decimal(numeric, dp);
+
     lv_group_add_obj(jolt_gui_store.group.main, numeric);
     lv_group_focus_obj(numeric);
 
+    // so left/right actions get forwarded to this object
     jolt_gui_scr_set_enter_action(parent, &jolt_gui_send_enter_main);
     jolt_gui_scr_set_back_action(parent, &jolt_gui_send_left_main);
 
-    //todo: set fwd and back cb
+    // actions to perform on exiting via enter or back
     jolt_gui_num_set_enter_action(numeric, cb);
     jolt_gui_num_set_back_action(numeric, jolt_gui_scr_del);
 

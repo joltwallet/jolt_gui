@@ -106,14 +106,14 @@ static lv_action_t screen_finish_create(lv_obj_t *num) {
 
 static lv_action_t screen_pin_verify_create(lv_obj_t *num) {
     jolt_gui_num_get_hash(num, pin_hash); // compute hash for first pin entry screen
-    jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
-            JOLT_GUI_NO_DECIMAL, "PIN Verify", &screen_finish_create); 
+    jolt_gui_scr_num_create( "PIN Verify", CONFIG_JOLT_GUI_PIN_LEN,
+            JOLT_GUI_NO_DECIMAL, &screen_finish_create); 
     return 0;
 }
 
 static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
-    lv_obj_t *screen = jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
-            1, "PIN", screen_pin_verify_create);
+    lv_obj_t *screen = jolt_gui_scr_num_create( "PIN",
+            CONFIG_JOLT_GUI_PIN_LEN, 1, screen_pin_verify_create);
     return 0;
 }
 
