@@ -44,10 +44,6 @@ struct {
         lv_obj_t *label;
         hardware_monitor_t indicators[JOLT_GUI_STATUSBAR_INDEX_NUM];
     } statusbar;
-    struct {
-        lv_obj_t *bar; 
-        lv_obj_t *label;
-    } loading; // only 1 loading bar will ever be displayed at a time
 } jolt_gui_store;
 
 /**********************
