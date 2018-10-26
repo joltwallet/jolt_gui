@@ -46,7 +46,9 @@ void jolt_gui_scr_loading_update(lv_obj_t *parent,
     xSemaphoreGive( jolt_gui_store.mutex );
 }
 
-/* Create the loading object before initiating the task */
+/* Creates and returns a loading screen.
+ *
+ * Defaults the back and enter action to NULL */
 lv_obj_t *jolt_gui_scr_loading_create(const char *title) {
     lv_obj_t *parent = jolt_gui_parent_create();
 
@@ -79,6 +81,9 @@ lv_obj_t *jolt_gui_scr_loading_create(const char *title) {
     lv_obj_set_size(label, CONFIG_JOLT_GUI_LOADING_TEXT_W,
             label_style->text.font->h_px);
 	lv_obj_align(label, bar, LV_ALIGN_OUT_TOP_MID, 0, -10);
+
+    jolt_gui_scr_set_back_action(parent, NULL);
+    jolt_gui_scr_set_enter_action(parent, NULL);
 
     return parent;
 }

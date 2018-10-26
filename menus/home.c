@@ -106,6 +106,7 @@ static void test_loading_task(void *param) {
             jolt_gui_scr_loading_update(scr, NULL, "meow", i);
         }
     }
+    lv_obj_del(scr);
     vTaskDelete(NULL);
 }
 
