@@ -206,16 +206,16 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
 #endif
 
     if(sign == LV_SIGNAL_CORD_CHG) {
-        printf("coord changed\n");
+        //printf("coord changed\n");
     }
     else if(sign == LV_SIGNAL_STYLE_CHG) {
-        printf("style changed\n");
+        //printf("style changed\n");
     }
     else if(sign == LV_SIGNAL_FOCUS) {
-        printf("signal focus\n");
+        //printf("signal focus\n");
     }
     else if(sign == LV_SIGNAL_DEFOCUS) {
-        printf("signal defocus\n");
+        //printf("signal defocus\n");
     }
 #if USE_LV_GROUP
     else if(sign == LV_SIGNAL_CONTROLL){
@@ -226,21 +226,21 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
 
         switch(c){
             case LV_GROUP_KEY_UP: {
-                printf("Pressed up\n");
+                //printf("Pressed up\n");
                 lv_obj_t *rol = ext->rollers[ext->pos];
                 rol->signal_func(rol, LV_SIGNAL_CONTROLL, param);
                 break;
             }
 
             case LV_GROUP_KEY_DOWN: {
-                printf("Pressed Down\n");
+                //printf("Pressed Down\n");
                 ext->rollers[ext->pos]->signal_func(
                         ext->rollers[ext->pos],
                         LV_SIGNAL_CONTROLL, param);
                 break;
             }
             case LV_GROUP_KEY_LEFT: {
-                printf("Pressed left\n");
+                //printf("Pressed left\n");
                 /* Preserve the currently selected roller value */
                 rol_ext->ddlist.sel_opt_id_ori = rol_ext->ddlist.sel_opt_id;
 
@@ -255,7 +255,7 @@ static lv_res_t jolt_gui_num_signal(lv_obj_t *num, lv_signal_t sign, void *param
                 break;
             }
             case LV_GROUP_KEY_ENTER: {
-                printf("Pressed enter\n");
+                //printf("Pressed enter\n");
                 /* Preserve the currently selected roller value */
                 rol_ext->ddlist.sel_opt_id_ori = rol_ext->ddlist.sel_opt_id;
                 if(ext->pos < ext->len-1) {
