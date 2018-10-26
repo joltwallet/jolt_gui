@@ -74,7 +74,7 @@ lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
 lv_obj_t *jolt_gui_parent_create();
 
 /* Deletes the container of the currently focused object */
-lv_action_t jolt_gui_delete_current_screen();
+lv_action_t jolt_gui_scr_del();
 
 /* Display Text; Pressing any button returns to previous screen */
 lv_obj_t *jolt_gui_scr_text_create(const char *title, const char *body);

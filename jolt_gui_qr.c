@@ -53,7 +53,7 @@ static lv_action_t delete_screen(lv_obj_t *btn) {
     lv_img_set_src( img, NULL );
     free(data);
 
-    jolt_gui_delete_current_screen();
+    jolt_gui_scr_del();
     return 0;
 }
 

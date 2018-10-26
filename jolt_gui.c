@@ -37,7 +37,7 @@
  *   GLOBAL FUNCTIONS
  **********************/
 
-lv_action_t jolt_gui_delete_current_screen() {
+lv_action_t jolt_gui_scr_del() {
     lv_obj_t *scrn = lv_group_get_focused(jolt_gui_store.group.main);
     if( NULL == scrn ) {
         MSG("Nothing in focus\n");
@@ -90,7 +90,7 @@ lv_obj_t *jolt_gui_scr_menu_create(const char *title) {
     jolt_gui_obj_title_create(parent, title);
 
     jolt_gui_scr_set_enter_action(parent, jolt_gui_send_enter_main);
-    jolt_gui_scr_set_back_action(parent, jolt_gui_delete_current_screen);
+    jolt_gui_scr_set_back_action(parent, jolt_gui_scr_del);
     return parent;
 }
 
@@ -150,7 +150,7 @@ lv_obj_t *jolt_gui_scr_text_create(const char *title, const char *body) {
 
     lv_group_focus_obj(page);
 
-    jolt_gui_scr_set_back_action(parent, jolt_gui_delete_current_screen);
+    jolt_gui_scr_set_back_action(parent, jolt_gui_scr_del);
     jolt_gui_scr_set_enter_action(parent, NULL);
 
     return parent;

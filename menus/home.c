@@ -13,17 +13,12 @@
  **********************/
 static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn);
 static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn);
+static lv_action_t jolt_gui_test_number_create(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
 static const char TAG[] = "menu_home";
-
-
-static lv_action_t back_release_action(lv_obj_t *btn) {
-    jolt_gui_delete_current_screen();
-    return 0;
-}
 
 static lv_action_t launch_file_proxy(lv_obj_t *btn) {
     char *fn = lv_list_get_btn_text( btn );
@@ -39,7 +34,7 @@ void jolt_gui_menu_home_create() {
 
     // Don't need to set group since indev driver sends direct keypresses
     lv_obj_t *btn_back = lv_btn_create(lv_scr_act(), NULL);
-    lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, &back_release_action);
+    lv_btn_set_action(btn_back, LV_BTN_ACTION_CLICK, jolt_gui_scr_del);
     lv_group_add_obj(jolt_gui_store.group.back, btn_back);
 
     /* Create StatusBar */
@@ -77,7 +72,7 @@ void jolt_gui_menu_home_create() {
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Settings", menu_settings_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "QR", jolt_gui_test_qrcode_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Loading", jolt_gui_test_loading_create);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 2", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Number", jolt_gui_test_number_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 3", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 4", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 5", NULL);
@@ -88,6 +83,12 @@ void jolt_gui_menu_home_create() {
 
     }
 #endif
+}
+
+static lv_action_t jolt_gui_test_number_create(lv_obj_t *btn) {
+    jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
+            JOLT_GUI_NO_DECIMAL, "Number Test", jolt_gui_scr_del); 
+    return 0;
 }
 
 static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {

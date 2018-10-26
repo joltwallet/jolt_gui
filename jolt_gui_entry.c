@@ -295,11 +295,6 @@ void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb){
     ext->back_cb = cb;
 }
 
-static lv_action_t delete_screen(lv_obj_t *pin_screen) {
-    jolt_gui_delete_current_screen();
-    return 0;
-}
-
 /* Creates title, number entry screen, and handles buttons.
  * Within Jolt, you usually call this function because it creates the typical
  * numerical entry setup.
@@ -321,7 +316,7 @@ lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp,
 
     //todo: set fwd and back cb
     jolt_gui_num_set_enter_action(numeric, cb);
-    jolt_gui_num_set_back_action(numeric, delete_screen);
+    jolt_gui_num_set_back_action(numeric, jolt_gui_scr_del);
 
     jolt_gui_obj_title_create(parent, title);
 
