@@ -33,7 +33,7 @@
 struct {
     bool first_boot;
     SemaphoreHandle_t mutex; // mutex for the entire gui system
-    lv_obj_t *main_menu_list;
+    lv_obj_t *main_menu;
     struct {
         lv_group_t *main; // Parent group for user input
         lv_group_t *back; // Group used to handle back button
@@ -74,7 +74,7 @@ lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
 lv_obj_t *jolt_gui_parent_create();
 
 /* Deletes the container of the currently focused object */
-lv_action_t jolt_gui_delete_current_screen(); //todo change this
+lv_action_t jolt_gui_delete_current_screen();
 
 /* Display Text; Pressing any button returns to previous screen */
 lv_obj_t *jolt_gui_scr_text_create(const char *title, const char *body);

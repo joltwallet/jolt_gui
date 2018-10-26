@@ -43,7 +43,7 @@ lv_action_t jolt_gui_delete_current_screen() {
         MSG("Nothing in focus\n");
         return 0;
     }
-    if( scrn == jolt_gui_store.main_menu_list ) {
+    if( scrn == jolt_gui_store.main_menu ) {
         MSG("Can't exit main menu\n");
         return 0;
     }
@@ -56,7 +56,7 @@ lv_action_t jolt_gui_delete_current_screen() {
         if( tmp != lv_scr_act() ) {
             parent = tmp;
         }
-        if( tmp == jolt_gui_store.main_menu_list ) {
+        if( tmp == jolt_gui_store.main_menu ) {
             return 0;
         }
     }

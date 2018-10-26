@@ -47,9 +47,9 @@ void jolt_gui_menu_home_create() {
 
     /*Create the list*/
 #if PC_SIMULATOR
-    jolt_gui_store.main_menu_list = jolt_gui_menu_create("Main", NULL, "PIN Entry",
+    jolt_gui_store.main_menu = jolt_gui_menu_create("Main", NULL, "PIN Entry",
             jolt_gui_test_pin_create);
-    lv_obj_t *mmlist = jolt_gui_store.main_menu_list;
+    lv_obj_t *mmlist = jolt_gui_store.main_menu;
     lv_list_add(mmlist, NULL, "Loading Test", jolt_gui_test_loading_create);
     lv_list_add(mmlist, NULL, "Alphabet", jolt_gui_test_alphabet_create);
     lv_list_add(mmlist, NULL, "Numeric Begin", jolt_gui_test_numeric_begin_dp_create);
@@ -66,24 +66,24 @@ void jolt_gui_menu_home_create() {
         char **fns = NULL;
         uint16_t n_fns = jolt_fs_get_all_elf_fns( &fns );
 
-        jolt_gui_store.main_menu_list = jolt_gui_scr_menu_create("Main");
+        jolt_gui_store.main_menu = jolt_gui_scr_menu_create("Main");
         for(uint16_t i=0; i<n_fns; i++) {
             ESP_LOGD(TAG, "Registering App \"%s\" into the GUI", fns[i]);
-            jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, fns[i], launch_file_proxy);
+            jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, fns[i], launch_file_proxy);
         }
         jolt_h_free_char_array(fns, n_fns);
 
 #if JOLT_GUI_TEST_MENU
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Settings", menu_settings_create);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "QR", jolt_gui_test_qrcode_create);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Loading", jolt_gui_test_loading_create);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 2", NULL);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 3", NULL);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 4", NULL);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 5", NULL);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Dummy 6", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Settings", menu_settings_create);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "QR", jolt_gui_test_qrcode_create);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Loading", jolt_gui_test_loading_create);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 2", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 3", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 4", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 5", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 6", NULL);
 #else
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu_list, NULL, "Settings", menu_settings_create);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Settings", menu_settings_create);
 #endif
 
     }
