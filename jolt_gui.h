@@ -4,11 +4,11 @@
 #include "lvgl.h"
 #include "lv_conf.h"
 #include "jolt_gui_entry.h"
+#include "jolt_gui_first_boot.h"
 #include "jolt_gui_loading.h"
+#include "jolt_gui_qr.h"
 #include "jolt_gui_statusbar.h"
 #include "jolt_gui_symbols.h"
-#include "jolt_gui_first_boot.h"
-#include "jolt_gui_qr.h"
 #include "menus/home.h"
 
 #if PC_SIMULATOR

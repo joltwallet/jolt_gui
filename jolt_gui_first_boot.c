@@ -56,19 +56,6 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
     return E_FAILURE;
 }
 
-/* Collects the information on the rollers, computes the hash */
-static void compute_hash(lv_obj_t *num, uint256_t hash) {
-    uint8_t pin_array[CONFIG_JOLT_GUI_PIN_LEN] = { 0 };
-    jolt_gui_num_get_arr( num, pin_array, sizeof(pin_array) );
-
-    /* Convert pin into a 256-bit key */
-    crypto_generichash_blake2b_state hs;
-    crypto_generichash_init(&hs, NULL, 32, 32);
-    crypto_generichash_update(&hs, (unsigned char *) pin_array,
-            CONFIG_JOLT_GUI_PIN_LEN);
-    crypto_generichash_final(&hs, hash, 32);
-}
-
 static void generate_mnemonic() {
     bm_entropy256(mnemonic_bin);
 #if CONFIG_JOLT_STORE_ATAES132A
@@ -92,11 +79,11 @@ static void generate_mnemonic() {
 
 static lv_action_t screen_finish_create(lv_obj_t *num) {
     CONFIDENTIAL static uint256_t pin_hash_verify;
-    compute_hash(num, pin_hash_verify);
+    jolt_gui_num_get_hash(num, pin_hash_verify);
     // Verify the pins match
     if( 0 == memcmp(pin_hash, pin_hash_verify, sizeof(pin_hash_verify)) ){
         sodium_memzero(pin_hash_verify, sizeof(pin_hash_verify));
-        // todo: store and reboot
+
         storage_set_mnemonic(mnemonic_bin, pin_hash);
         storage_set_pin_count(0); // Only does something if pin_count is setable
         uint32_t pin_count = storage_get_pin_count();
@@ -118,7 +105,7 @@ static lv_action_t screen_finish_create(lv_obj_t *num) {
 }
 
 static lv_action_t screen_pin_verify_create(lv_obj_t *num) {
-    compute_hash(num, pin_hash); // compute hash for first pin entry screen
+    jolt_gui_num_get_hash(num, pin_hash); // compute hash for first pin entry screen
     jolt_gui_num_screen_create( CONFIG_JOLT_GUI_PIN_LEN,
             JOLT_GUI_NO_DECIMAL, "PIN Verify", &screen_finish_create); 
     return 0;
@@ -138,15 +125,13 @@ static lv_action_t screen_mnemonic_create(lv_obj_t *btn) {
         get_nth_word(buf, sizeof(buf), mnemonic, i);
         if( i == 0 ) {
             jolt_gui_scr_menu_add(scr, NULL, buf, NULL);
-            // debug: move this to else statement
-            jolt_gui_scr_menu_add(scr, NULL, "continue",
-                    &screen_pin_entry_create);
         }
         else {
             jolt_gui_scr_menu_add(scr, NULL, buf, NULL);
         }
     }
-
+    jolt_gui_scr_menu_add(scr, NULL, "continue",
+            screen_pin_entry_create);
     return 0;
 }
 

@@ -11,7 +11,6 @@ static const uint8_t color_header[] = {
 static lv_img_dsc_t *jolt_gui_qr_to_img_dsc(QRCode *qrcode) {
     uint8_t byte_width = (qrcode->size + 7) / 8; // Number of bytes to store a row
 	uint16_t data_size = (qrcode->size)*byte_width + sizeof(color_header);
-    printf("data_size: %d\n", data_size);
     uint8_t *data = calloc(data_size, sizeof(uint8_t));
     if( NULL == data ) {
         return NULL;

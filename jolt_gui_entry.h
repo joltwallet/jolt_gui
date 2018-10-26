@@ -57,7 +57,11 @@ void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb);
 lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp, 
         const char *title, lv_action_t cb);
 
-
+/* Populates arr with the roller values */
 uint8_t jolt_gui_num_get_arr(lv_obj_t *num, uint8_t *arr, uint8_t arr_len);
+
+/* Computes a 256-bit blake2b hash into *hash */
+uint8_t jolt_gui_num_get_hash(lv_obj_t *num, uint8_t *hash);
+
 
 #endif

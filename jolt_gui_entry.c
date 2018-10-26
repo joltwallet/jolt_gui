@@ -1,6 +1,7 @@
 #include "jolt_gui.h"
 #include "jolt_gui_entry.h"
 #include <stdio.h>
+#include "sodium.h"
 
 /*********************
  *      DEFINES
@@ -30,6 +31,7 @@ static lv_signal_func_t ancestor_signal;
  *   GLOBAL FUNCTIONS
  **********************/
 
+
 static lv_obj_t *digit_create(lv_obj_t *parent) {
     lv_obj_t *roller;
     roller = lv_roller_create(parent, NULL);
@@ -44,6 +46,39 @@ static lv_obj_t *digit_create(lv_obj_t *parent) {
     lv_roller_set_selected(roller, 19, false); // Set it to the middle 0 entry
     //lv_roller_set_action(roller, digit_entry_cb);
     return roller;
+}
+
+static void jolt_gui_num_align(lv_obj_t *num) {
+    jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
+
+    /* Compute Roller Spacing */
+    {
+        uint8_t rol_w = lv_obj_get_width(ext->rollers[0]);
+        uint8_t cont_w = lv_obj_get_width(num);
+        cont_w = LV_HOR_RES;
+        ext->spacing = ( cont_w - ext->len*rol_w ) / ext->len;
+        ext->offset = ( cont_w - 
+                (ext->len-1) * ext->spacing - ext->len * rol_w ) / 2;
+    }
+
+    for(uint8_t i=0; i < ext->len; i++) {
+        if(ext->pos == i){
+            lv_roller_set_visible_row_count(ext->rollers[i], 3);
+        }
+        else{
+            lv_roller_set_visible_row_count(ext->rollers[i], 1);
+        }
+        if(0 == i){
+            lv_obj_align(ext->rollers[i],
+                    NULL, LV_ALIGN_IN_LEFT_MID, 
+                    ext->offset, 0);
+        }
+        else{
+            lv_obj_align(ext->rollers[i],
+                    ext->rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
+                    ext->spacing, 0);
+        }
+    }
 }
 
 lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
@@ -90,40 +125,6 @@ lv_obj_t *jolt_gui_num_create(lv_obj_t * par, const lv_obj_t * copy) {
         // todo
     }
     return new_num;
-}
-
-static void jolt_gui_num_align(lv_obj_t *num) {
-    jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
-
-    /* Compute Roller Spacing */
-    {
-        uint8_t rol_w = lv_obj_get_width(ext->rollers[0]);
-        uint8_t cont_w = lv_obj_get_width(num);
-        cont_w = LV_HOR_RES;
-        ext->spacing = ( cont_w - ext->len*rol_w ) / ext->len;
-        ext->offset = ( cont_w - 
-                (ext->len-1) * ext->spacing - ext->len * rol_w ) / 2;
-    }
-
-    for(uint8_t i=0; i < ext->len; i++) {
-        if(ext->pos == i){
-            lv_roller_set_visible_row_count(ext->rollers[i], 3);
-        }
-        else{
-            lv_roller_set_visible_row_count(ext->rollers[i], 1);
-        }
-        if(0 == i){
-            lv_obj_align(ext->rollers[i],
-                    NULL, LV_ALIGN_IN_LEFT_MID, 
-                    ext->offset, 0);
-        }
-        else{
-            lv_obj_align(ext->rollers[i],
-                    ext->rollers[i-1], LV_ALIGN_OUT_RIGHT_MID, 
-                    ext->spacing, 0);
-        }
-    }
-
 }
 
 void jolt_gui_num_set_len(lv_obj_t *num, uint8_t n) {
@@ -326,3 +327,27 @@ lv_obj_t *jolt_gui_num_screen_create(uint8_t len, int8_t dp,
 
     return parent;
 }
+
+/* Computes a 256-bit blake2b hash into *hash */
+uint8_t jolt_gui_num_get_hash(lv_obj_t *num, uint8_t *hash) {
+    jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
+    uint8_t *pin_array = NULL;
+    pin_array = calloc(ext->len, sizeof(uint8_t));
+    if( NULL == pin_array ) {
+        return;
+    }
+
+    jolt_gui_num_get_arr( num, pin_array, ext->len );
+
+    /* Convert pin into a 256-bit key */
+    crypto_generichash_blake2b_state hs;
+    crypto_generichash_init(&hs, NULL, 32, 32);
+    crypto_generichash_update(&hs, (unsigned char *) pin_array,
+            CONFIG_JOLT_GUI_PIN_LEN);
+    crypto_generichash_final(&hs, hash, 32);
+
+    /* Clean up local pin_array variable */
+    sodium_memzero(pin_array, ext->len);
+    free(pin_array);
+}
+
