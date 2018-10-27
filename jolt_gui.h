@@ -20,6 +20,8 @@
     #include "freertos/task.h"
     #include "freertos/semphr.h"
     #include "hal/hw_monitor.h"
+
+    #include "elfloader.h"
 #endif
 
 
@@ -30,6 +32,7 @@
  *   GLOBAL VARIABLES
  **********************/
 
+/* This whole struct should be moved into globals */
 struct {
     bool first_boot;
     SemaphoreHandle_t mutex; // mutex for the entire gui system
@@ -44,6 +47,10 @@ struct {
         lv_obj_t *label;
         hardware_monitor_t indicators[JOLT_GUI_STATUSBAR_INDEX_NUM];
     } statusbar;
+    struct {
+        ELFLoaderContext_t *ctx;
+        lv_obj_t *scr;
+    } app;
 } jolt_gui_store;
 
 /**********************

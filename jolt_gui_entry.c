@@ -148,16 +148,21 @@ void jolt_gui_num_set_decimal(lv_obj_t *num, int8_t pos) {
     jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);
     ext->decimal = pos;
     /* Align the decimal point */
-    if( pos > 0 ) {
-        // Different alignment policy if its the left-most roller
-        if( ext->decimal == ext->len) {
-            lv_obj_align(ext->decimal_obj, ext->rollers[0],
-                    LV_ALIGN_OUT_LEFT_MID, 0,0);
+    if( pos == 0 ) {
+        lv_obj_align(ext->decimal_obj, ext->rollers[0],
+                LV_ALIGN_OUT_LEFT_MID, -1, 0);
+        lv_obj_set_hidden(ext->decimal_obj, false); // unhide the decimal point
+    }
+    else if( pos > 0 ) {
+        /* compute how much to shift to be centered*/
+        // todo: better shifting
+        uint8_t shift = ext->spacing;
+        if(shift > 5) {
+            shift -= 6;
         }
-        else {
-            lv_obj_align(ext->decimal_obj, ext->rollers[ext->decimal-1],
-                    LV_ALIGN_OUT_RIGHT_MID, 0,0);
-        }
+        shift /=2;
+        lv_obj_align(ext->decimal_obj, ext->rollers[ext->decimal-1],
+                LV_ALIGN_OUT_RIGHT_MID, shift, 0);
         lv_obj_set_hidden(ext->decimal_obj, false); // unhide the decimal point
     }
     else {
