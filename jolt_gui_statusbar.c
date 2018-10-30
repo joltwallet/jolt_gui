@@ -62,11 +62,10 @@ static void statusbar_update() {
     }
     ptr += 3;
 
-    xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
+    // Dont need a semaphore around here because this is called in an lv_task
     lv_label_set_text(jolt_gui_store.statusbar.label, statusbar_symbols);
     lv_obj_align(jolt_gui_store.statusbar.label, jolt_gui_store.statusbar.container,
             LV_ALIGN_IN_RIGHT_MID, -1, 0);
-    xSemaphoreGive( jolt_gui_store.mutex );
 }
 
 /* Assumes that hardware_monitors have been externally intialized and the 
