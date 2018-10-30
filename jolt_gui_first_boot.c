@@ -113,7 +113,7 @@ static lv_action_t screen_pin_verify_create(lv_obj_t *num) {
 
 static lv_action_t screen_pin_entry_create(lv_obj_t *btn) {
     lv_obj_t *screen = jolt_gui_scr_num_create( "PIN",
-            CONFIG_JOLT_GUI_PIN_LEN, 1, screen_pin_verify_create);
+            CONFIG_JOLT_GUI_PIN_LEN, JOLT_GUI_NO_DECIMAL, screen_pin_verify_create);
     return 0;
 }
 

@@ -56,6 +56,8 @@ void jolt_gui_num_set_back_action(lv_obj_t *num, lv_action_t cb);
 //
 lv_obj_t *jolt_gui_scr_num_create(const char *title,
         uint8_t len, int8_t dp, lv_action_t cb);
+/* Get the numeric object from the screen */
+lv_obj_t *jolt_gui_scr_num_get(lv_obj_t *parent);
 
 /* Populates arr with the roller values */
 uint8_t jolt_gui_num_get_arr(lv_obj_t *num, uint8_t *arr, uint8_t arr_len);

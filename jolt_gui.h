@@ -9,6 +9,7 @@
 #include "jolt_gui_qr.h"
 #include "jolt_gui_statusbar.h"
 #include "jolt_gui_symbols.h"
+#include "jolt_gui_pin.h"
 #include "menus/home.h"
 
 #if PC_SIMULATOR
@@ -20,6 +21,8 @@
     #include "freertos/task.h"
     #include "freertos/semphr.h"
     #include "hal/hw_monitor.h"
+    #include "jolttypes.h"
+    #include "bipmnemonic.h"
 
     #include "elfloader.h"
 #endif
@@ -50,7 +53,17 @@ struct {
     struct {
         ELFLoaderContext_t *ctx;
         lv_obj_t *scr;
+        int argc;
+        char **argv;
     } app;
+    struct {
+        CONFIDENTIAL char passphrase[BM_PASSPHRASE_BUF_LEN]; //currently not active
+        union {
+            CONFIDENTIAL char mnemonic[BM_MNEMONIC_BUF_LEN]; //currently not active
+            CONFIDENTIAL uint256_t mnemonic_bin;
+            CONFIDENTIAL uint512_t master_seed; //currently not active
+        };
+    } tmp; // used for message passing; do not keep data here for long.
 } jolt_gui_store;
 
 /**********************

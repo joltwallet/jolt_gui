@@ -331,6 +331,20 @@ lv_obj_t *jolt_gui_scr_num_create(const char *title,
     return parent;
 }
 
+lv_obj_t *jolt_gui_scr_num_get(lv_obj_t *parent) {
+    lv_obj_t *child = NULL;
+    lv_obj_type_t obj_type;
+    do {
+        child = lv_obj_get_child_back(parent, child); //the menu should be the first child
+        if ( NULL == child ) {
+            // cannot find the child list
+            return NULL;
+        }
+        lv_obj_get_type(child, &obj_type);
+    } while(strcmp("jolt_num", obj_type.type[0]));
+    return child;
+}
+
 /* Computes a 256-bit blake2b hash into *hash */
 uint8_t jolt_gui_num_get_hash(lv_obj_t *num, uint8_t *hash) {
     jolt_gui_num_ext_t *ext = lv_obj_get_ext_attr(num);

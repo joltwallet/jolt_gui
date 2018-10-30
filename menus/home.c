@@ -6,7 +6,11 @@
 #include "jolt_helpers.h"
 
 #include "esp_log.h"
+
+/* Stuff that should be moved somewhere else */
 #include "jolt_gui/jolt_gui_qr.h"
+#include "globals.h"
+#include <driver/adc.h>
 
 /**********************
  *  STATIC PROTOTYPES
@@ -14,6 +18,7 @@
 static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn);
 static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn);
 static lv_action_t jolt_gui_test_number_create(lv_obj_t *btn);
+static lv_action_t jolt_gui_test_battery_create(lv_obj_t *btn);
 
 /**********************
  *  STATIC VARIABLES
@@ -87,7 +92,7 @@ void jolt_gui_menu_home_create() {
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "QR", jolt_gui_test_qrcode_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Loading", jolt_gui_test_loading_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Number", jolt_gui_test_number_create);
-        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 3", NULL);
+        jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Battery", jolt_gui_test_battery_create);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 4", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 5", NULL);
         jolt_gui_scr_menu_add(jolt_gui_store.main_menu, NULL, "Dummy 6", NULL);
@@ -129,5 +134,33 @@ static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn) {
     xTaskCreate(test_loading_task,
                 "TestLoading", 28000,
                 (void *) scr, 10, NULL);
+    return 0;
+}
+
+
+
+/* Screen that gives info on the battery */
+static lv_task_t *test_battery_task_h = NULL;
+static lv_obj_t *test_battery_scr = NULL;
+
+static lv_action_t jolt_gui_test_battery_del(lv_obj_t *btn) {
+    lv_task_del(test_battery_task_h);
+    lv_obj_del(test_battery_scr);
+    return 0;
+}
+void jolt_gui_test_battery_task(void *param) {
+    if(NULL != test_battery_scr) {
+        lv_obj_del(test_battery_scr);
+    }
+    int val = adc1_get_raw(JOLT_ADC1_VBATT);
+    char *buf[40];
+    snprintf(buf, sizeof(buf), "Raw Value: %d\nPercentage: %d", val,
+            jolt_gui_store.statusbar.indicators[JOLT_GUI_STATUSBAR_INDEX_BATTERY].val);
+    test_battery_scr = jolt_gui_scr_text_create("Battery", buf);
+    lv_obj_t *jolt_gui_scr_set_back_action(test_battery_scr, jolt_gui_test_battery_del);
+}
+
+static lv_action_t jolt_gui_test_battery_create(lv_obj_t *btn) {
+    test_battery_task_h = lv_task_create(jolt_gui_test_battery_task, 300, LV_TASK_PRIO_LOW, NULL);
     return 0;
 }

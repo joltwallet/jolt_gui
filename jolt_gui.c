@@ -190,8 +190,11 @@ static void group_mod_cb(lv_style_t *style) {
 void jolt_gui_group_create() {
     /* Create Groups for user input */
     jolt_gui_store.group.main = lv_group_create();
+    lv_group_set_refocus_policy(jolt_gui_store.group.main, LV_GROUP_REFOCUS_POLICY_PREV);
     jolt_gui_store.group.back = lv_group_create();
+    lv_group_set_refocus_policy(jolt_gui_store.group.back, LV_GROUP_REFOCUS_POLICY_PREV);
     jolt_gui_store.group.enter = lv_group_create();
+    lv_group_set_refocus_policy(jolt_gui_store.group.enter, LV_GROUP_REFOCUS_POLICY_PREV);
     lv_group_set_style_mod_cb(jolt_gui_store.group.main, group_mod_cb);
 }
 
