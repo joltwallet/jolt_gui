@@ -118,8 +118,11 @@ static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
 static void test_loading_task(void *param) {
     lv_obj_t *scr = (lv_obj_t *)param;
     for(uint8_t i=0;i < 101;vTaskDelay(pdMS_TO_TICKS(1000)), i+=10){
-        if(i>50){
+        if(i==50){
             jolt_gui_scr_loading_update(scr, "Almost Done", "woof", i);
+        }
+        else if(i>50){
+            jolt_gui_scr_loading_update(scr, NULL, "bark", i);
         }
         else{
             jolt_gui_scr_loading_update(scr, NULL, "meow", i);
@@ -138,7 +141,6 @@ static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn) {
 }
 
 
-
 /* Screen that gives info on the battery */
 static lv_task_t *test_battery_task_h = NULL;
 static lv_obj_t *test_battery_scr = NULL;
@@ -153,11 +155,11 @@ void jolt_gui_test_battery_task(void *param) {
         lv_obj_del(test_battery_scr);
     }
     int val = adc1_get_raw(JOLT_ADC1_VBATT);
-    char *buf[40];
+    char buf[40];
     snprintf(buf, sizeof(buf), "Raw Value: %d\nPercentage: %d", val,
             jolt_gui_store.statusbar.indicators[JOLT_GUI_STATUSBAR_INDEX_BATTERY].val);
     test_battery_scr = jolt_gui_scr_text_create("Battery", buf);
-    lv_obj_t *jolt_gui_scr_set_back_action(test_battery_scr, jolt_gui_test_battery_del);
+    jolt_gui_scr_set_back_action(test_battery_scr, jolt_gui_test_battery_del);
 }
 
 static lv_action_t jolt_gui_test_battery_create(lv_obj_t *btn) {
