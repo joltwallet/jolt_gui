@@ -180,11 +180,15 @@ uint8_t jolt_gui_num_get_arr(lv_obj_t *num, uint8_t *arr, uint8_t arr_len) {
         arr[i] = 9 - (lv_roller_get_selected(ext->rollers[i]) % 10);
     }
 
-    printf("Entered PIN: ");
-    for(uint8_t i=0; i < ext->len; i++) {
-        printf("%d ", arr[i]);
+#if ESP_LOG_LEVEL >= ESP_LOG_DEBUG
+    {
+        printf("Entered PIN: ");
+        for(uint8_t i=0; i < ext->len; i++) {
+            printf("%d ", arr[i]);
+        }
+        printf("\n");
     }
-    printf("\n");
+#endif
     return 0;
 }
 
