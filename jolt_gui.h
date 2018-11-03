@@ -10,6 +10,7 @@
 #include "jolt_gui_statusbar.h"
 #include "jolt_gui_symbols.h"
 #include "jolt_gui_pin.h"
+#include "jolt_gui_stretch.h"
 #include "menus/home.h"
 
 #if PC_SIMULATOR
@@ -58,13 +59,17 @@ struct {
     } app;
     struct {
         CONFIDENTIAL char passphrase[BM_PASSPHRASE_BUF_LEN]; //currently not active
+        CONFIDENTIAL uint256_t pin;
         union {
             CONFIDENTIAL char mnemonic[BM_MNEMONIC_BUF_LEN]; //currently not active
             CONFIDENTIAL uint256_t mnemonic_bin;
             CONFIDENTIAL uint512_t master_seed; //currently not active
         };
-    } tmp; // used for message passing; do not keep data here for long.
+    } derivation; // used for message passing; do not keep data here for long.
 } jolt_gui_store;
+
+#define JOLT_GUI_SEM_TAKE    xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
+#define JOLT_GUI_SEM_GIVE    xSemaphoreGive( jolt_gui_store.mutex );
 
 /**********************
  *   GLOBAL FUNCTIONS

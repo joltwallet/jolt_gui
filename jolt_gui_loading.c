@@ -14,7 +14,6 @@ void jolt_gui_scr_loading_update(lv_obj_t *parent,
     lv_obj_t *loading_label = NULL;
     lv_obj_t *title_label = NULL;
 
-    xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
 	while( NULL != (child = lv_obj_get_child(parent, child)) ) {
 		lv_obj_get_type(child, &obj_type);
 		if( 0 == strcmp("lv_cont", obj_type.type[0]) ) {
@@ -36,6 +35,9 @@ void jolt_gui_scr_loading_update(lv_obj_t *parent,
         }
 	}
 
+    if( percentage > 100 ) {
+        percentage = 100;
+    }
 	lv_bar_set_value_anim(bar, percentage, CONFIG_JOLT_GUI_LOADING_BAR_ANIM_MS);
     if( text ) {
         lv_label_set_text(loading_label, text);
@@ -43,7 +45,6 @@ void jolt_gui_scr_loading_update(lv_obj_t *parent,
     if( title ) {
         lv_label_set_text(title_label, title);
     }
-    xSemaphoreGive( jolt_gui_store.mutex );
 }
 
 /* Creates and returns a loading screen.

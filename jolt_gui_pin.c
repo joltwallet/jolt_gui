@@ -12,34 +12,24 @@ static lv_action_t user_back_cb;
 static lv_action_t user_enter_cb;
 
 /* Gets triggered when user presses back on the "incorrect pin" screen */
-static lv_action_t pin_fail_cb( lv_obj_t *scr ) {
+static lv_action_t pin_fail_cb( lv_obj_t *btn ) {
     /* Recreate the pin entry screen */
     jolt_gui_scr_pin_create(user_back_cb, user_enter_cb);
     /* Delete the "incorrect pin" screen */
+    lv_obj_t *scr = lv_obj_get_parent(btn);
+    ESP_LOGI(TAG, "Deleting %p", scr);
     lv_obj_del(scr);
     return 0;
 }
 
-/* gets triggered when the user presses enter on the last pin roller on a pin
- * screen */
-static lv_action_t pin_enter_cb(lv_obj_t *num) {
-    // todo: actually make this a loading screen
-    
-    /* Get the pin_hash from the pin screen */
-    CONFIDENTIAL uint256_t pin_hash;
-    jolt_gui_num_get_hash(num, pin_hash);
-
-    /* Delete the Pin Entry Screen */
-    lv_obj_del(lv_obj_get_parent(num));
-
-    // todo: spawn a task to do the stretching
-    // todo: storage_get_mnemonic should take the stretched key
-    
+static lv_action_t stretch_cb(lv_obj_t *btn) {
     /* storage_get_mnemonic inherently increments and stores the 
      * attempt counter*/
     bool unlock_res = storage_get_mnemonic(
-            jolt_gui_store.tmp.mnemonic_bin, pin_hash);
-    sodium_memzero(pin_hash, sizeof(pin_hash));
+            jolt_gui_store.derivation.mnemonic_bin, 
+            jolt_gui_store.derivation.pin);
+    sodium_memzero( jolt_gui_store.derivation.pin,
+            sizeof(jolt_gui_store.derivation.pin) );
     if( unlock_res ) {
         /* Correct PIN */
         ESP_LOGI(TAG, "Correct PIN");
@@ -56,13 +46,33 @@ static lv_action_t pin_enter_cb(lv_obj_t *num) {
         /* Wrong PIN */
         ESP_LOGE(TAG, "Incorrect PIN");
 
-        /* Delete the PIN Screen */
-        lv_obj_del(lv_obj_get_parent(num));
-
         /* Create a screen telling the user */
         lv_obj_t *scr = jolt_gui_scr_text_create("PIN", "Wrong PIN");
+        ESP_LOGI(TAG, "Created Wrong PIN Screen at %p", scr);
         jolt_gui_scr_set_back_action(scr, pin_fail_cb);
+        jolt_gui_scr_set_enter_action(scr, pin_fail_cb);
     }
+    return 0;
+
+}
+
+/* gets triggered when the user presses enter on the last pin roller on a pin
+ * screen */
+static lv_action_t pin_enter_cb(lv_obj_t *num) {
+    // todo: display derivation path
+    // todo: actually make this a loading screen
+    
+    /* Get the pin_hash from the pin screen */
+    jolt_gui_num_get_hash(num, jolt_gui_store.derivation.pin);
+
+    /* Delete the Pin Entry Screen */
+    ESP_LOGI(TAG, "Deleting PIN Screen");
+    lv_obj_del(lv_obj_get_parent(num));
+
+    ESP_LOGI(TAG, "Calling Storage Stretch");
+    // todo: use app name for title
+    jolt_gui_stretch("", "Logging In", jolt_gui_store.derivation.pin, stretch_cb);
+
     return 0;
 }
 
@@ -79,7 +89,7 @@ static lv_action_t pin_back_cb( lv_obj_t *num ) {
 
 lv_obj_t *jolt_gui_scr_pin_create(lv_action_t failure_cb, lv_action_t success_cb) {
     /* Primary Job: Prompt user for a pin, and on success to put the 
-     * 256-bit mnemonic into jolt_gui_store.tmp.mnemonic_bin.
+     * 256-bit mnemonic into jolt_gui_store.derivation.mnemonic_bin.
      *
      * It is host function's responsibility to ensure cleanup of mnemonic.
      *
