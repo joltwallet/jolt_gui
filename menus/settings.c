@@ -27,11 +27,19 @@ static lv_action_t menu_wifi_details_create(lv_action_t *btn) {
     return 0;
 }
 
+static lv_action_t factory_reset_back( lv_obj_t *btn ) {
+    jolt_gui_scr_del();
+    return 0;
+}
+
+static lv_action_t factory_reset_enter( lv_obj_t *btn ) {
+    storage_factory_reset();
+    return 0;
+}
 static lv_action_t menu_factory_reset_create(lv_obj_t *btn) {
     lv_obj_t *scr = jolt_gui_scr_menu_create("Factory Reset?");
-    jolt_gui_scr_menu_add(scr, NULL, "No", NULL);
-    jolt_gui_scr_menu_add(scr, NULL, "Yes", NULL);
-    //storage_factory_reset();
+    jolt_gui_scr_menu_add(scr, NULL, "No", factory_reset_back);
+    jolt_gui_scr_menu_add(scr, NULL, "Yes", factory_reset_enter);
     return 0;
 }
 
