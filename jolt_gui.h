@@ -11,6 +11,7 @@
 #include "jolt_gui_symbols.h"
 #include "jolt_gui_pin.h"
 #include "jolt_gui_stretch.h"
+#include "jolt_gui_slider.h"
 #include "menus/home.h"
 
 #if PC_SIMULATOR
