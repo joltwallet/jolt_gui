@@ -25,23 +25,11 @@ static lv_action_t jolt_gui_test_battery_create(lv_obj_t *btn);
  **********************/
 static const char TAG[] = "menu_home";
 
-static void launcher_task(void *param) {
-    char *fn = (char *)param;
-    ESP_LOGI(TAG, "Launching %s", fn);
-    launch_file(fn, "app_main", 0, NULL);
-    vTaskDelete(NULL);
-}
-
 /* App launching is spawned in a different task because it's a bit intense.
  * Also launch_file is a blocking function*/
 static lv_action_t launch_file_proxy(lv_obj_t *btn) {
     char *fn = lv_list_get_btn_text( btn );
     ESP_LOGI(TAG, "Launching %s", fn);
-#if 0
-    xTaskCreate(launcher_task,
-                "launcher", 32000,
-                (void *) fn, CONFIG_JOLT_TASK_PRIORITY_LAUNCHER, NULL);
-#endif
     launch_file(fn, "app_main", 0, NULL); // puts the app back into the gui task
     return 0;
 }
@@ -137,7 +125,7 @@ static void test_loading_task(void *param) {
 static lv_action_t jolt_gui_test_loading_create(lv_obj_t *btn) {
     lv_obj_t *scr = jolt_gui_scr_loading_create("Loading Test");
     xTaskCreate(test_loading_task,
-                "TestLoading", 28000,
+                "TestLoading", 2000,
                 (void *) scr, 10, NULL);
     return 0;
 }

@@ -61,11 +61,9 @@ struct {
     struct {
         CONFIDENTIAL char passphrase[BM_PASSPHRASE_BUF_LEN]; //currently not active
         CONFIDENTIAL uint256_t pin;
-        union {
-            CONFIDENTIAL char mnemonic[BM_MNEMONIC_BUF_LEN]; //currently not active
-            CONFIDENTIAL uint256_t mnemonic_bin;
-            CONFIDENTIAL uint512_t master_seed; //currently not active
-        };
+        CONFIDENTIAL char mnemonic[BM_MNEMONIC_BUF_LEN];
+        CONFIDENTIAL uint256_t mnemonic_bin;
+        CONFIDENTIAL uint512_t master_seed;
     } derivation; // used for message passing; do not keep data here for long.
 } jolt_gui_store;
 
