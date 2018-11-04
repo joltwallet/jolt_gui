@@ -9,7 +9,7 @@
 
 /* Stuff that should be moved somewhere else */
 #include "jolt_gui/jolt_gui_qr.h"
-#include "globals.h"
+#include "jolt_globals.h"
 #include <driver/adc.h>
 
 /**********************
@@ -117,8 +117,7 @@ static lv_action_t jolt_gui_test_qrcode_create(lv_obj_t *btn) {
 
 static void test_loading_task(void *param) {
     lv_obj_t *scr = (lv_obj_t *)param;
-    JOLT_GUI_SEM_TAKE;
-    for(uint8_t i=0;i < 101;vTaskDelay(pdMS_TO_TICKS(1000)), i+=10){
+    for(uint8_t i=0;i < 101; vTaskDelay(pdMS_TO_TICKS(1000)), i+=10){
         JOLT_GUI_SEM_TAKE;
         if(i==50){
             jolt_gui_scr_loading_update(scr, "Almost Done", "woof", i);
