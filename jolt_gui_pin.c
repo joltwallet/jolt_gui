@@ -71,7 +71,7 @@ static lv_action_t pin_enter_cb(lv_obj_t *num) {
 
     ESP_LOGI(TAG, "Calling Storage Stretch");
     // todo: use app name for title
-    jolt_gui_stretch("", "Logging In", jolt_gui_store.derivation.pin, stretch_cb);
+    jolt_gui_stretch("", "Checking PIN", jolt_gui_store.derivation.pin, stretch_cb);
 
     return 0;
 }
