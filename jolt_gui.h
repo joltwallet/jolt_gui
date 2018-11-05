@@ -1,7 +1,7 @@
 #ifndef __JOLT_LVGL_GUI_H__
 #define __JOLT_LVGL_GUI_H__
 
-#include "lvgl.h"
+#include "lvgl/lvgl.h"
 #include "lv_conf.h"
 #include "jolt_gui_entry.h"
 #include "jolt_gui_first_boot.h"
