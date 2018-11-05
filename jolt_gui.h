@@ -6,12 +6,13 @@
 #include "jolt_gui_entry.h"
 #include "jolt_gui_first_boot.h"
 #include "jolt_gui_loading.h"
-#include "jolt_gui_qr.h"
-#include "jolt_gui_statusbar.h"
-#include "jolt_gui_symbols.h"
+#include "jolt_gui_menu.h"
 #include "jolt_gui_pin.h"
-#include "jolt_gui_stretch.h"
+#include "jolt_gui_qr.h"
 #include "jolt_gui_slider.h"
+#include "jolt_gui_statusbar.h"
+#include "jolt_gui_stretch.h"
+#include "jolt_gui_symbols.h"
 #include "menus/home.h"
 
 #if PC_SIMULATOR
@@ -81,14 +82,6 @@ void jolt_gui_group_create();
 /* Creates a title in the top left statusbar. 
  * Allocates and copies the title string. */
 lv_obj_t *jolt_gui_obj_title_create(lv_obj_t *parent, const char *title);
-
-/* Creates a submenu of correct size, location, group, and infocus. 
- * Need to provide arguments for first element so focus works correctly.*/
-lv_obj_t *jolt_gui_scr_menu_create(const char *title);
-
-/* Adds an item to a Jolt Menu Screen */
-lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
-        const char *txt, lv_action_t rel_action);
 
 /* Creates a parent object for a new screen thats easy to delete */
 lv_obj_t *jolt_gui_parent_create();
