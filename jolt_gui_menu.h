@@ -12,5 +12,7 @@ lv_obj_t *jolt_gui_scr_menu_create(const char *title);
 lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
         const char *txt, lv_action_t rel_action);
 
+/* Gets the list object of a menu screen */
+lv_obj_t *jolt_gui_scr_menu_get_list(lv_obj_t *par);
 
 #endif

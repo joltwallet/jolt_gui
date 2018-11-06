@@ -20,9 +20,8 @@ lv_obj_t *jolt_gui_scr_menu_create(const char *title) {
     return parent;
 }
 
-/* Adds an item to a Jolt Menu Screen */
-lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
-        const char *txt, lv_action_t rel_action) {
+/* Gets the list object of a menu screen */
+lv_obj_t *jolt_gui_scr_menu_get_list(lv_obj_t *par) {
     lv_obj_t *child = NULL;
     lv_obj_type_t obj_type;
     do {
@@ -33,14 +32,23 @@ lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
         }
         lv_obj_get_type(child, &obj_type);
     } while(strcmp("lv_list", obj_type.type[0]));
+    return child;
+}
 
-    lv_obj_t *res = lv_list_add(child, img_src, txt, rel_action);
+/* Adds an item to a Jolt Menu Screen */
+lv_obj_t *jolt_gui_scr_menu_add(lv_obj_t *par, const void *img_src,
+        const char *txt, lv_action_t rel_action) {
+    lv_obj_t *list = jolt_gui_scr_menu_get_list( par );
+    if( NULL == list ) {
+        return NULL;
+    }
+    lv_obj_t *res = lv_list_add(list, img_src, txt, rel_action);
 
     /* Add the list to the group after the first element has been added
      * so that the first item is properly highlighted. */
-    if( NULL == lv_obj_get_group(child) ) {
-        lv_group_add_obj(jolt_gui_store.group.main, child);
-        lv_group_focus_obj(child);
+    if( NULL == lv_obj_get_group( list ) ) {
+        lv_group_add_obj(jolt_gui_store.group.main, list);
+        lv_group_focus_obj( list );
     }
 
     return res;
