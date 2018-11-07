@@ -13,6 +13,7 @@
 #include "jolt_gui_statusbar.h"
 #include "jolt_gui_stretch.h"
 #include "jolt_gui_symbols.h"
+#include "jolt_gui_debug.h"
 #include "menus/home.h"
 
 #if PC_SIMULATOR
