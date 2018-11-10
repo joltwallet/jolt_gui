@@ -197,3 +197,11 @@ lv_action_t jolt_gui_send_left_main(lv_obj_t *btn) {
     lv_group_send_data(jolt_gui_store.group.main, LV_GROUP_KEY_LEFT);
     return 0;
 }
+
+void jolt_gui_sem_take() {
+    xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
+}
+void jolt_gui_sem_give() {
+    xSemaphoreGive( jolt_gui_store.mutex );
+}
+

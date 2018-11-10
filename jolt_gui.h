@@ -69,8 +69,8 @@ struct {
     } derivation; // used for message passing; do not keep data here for long.
 } jolt_gui_store;
 
-#define JOLT_GUI_SEM_TAKE    xSemaphoreTake( jolt_gui_store.mutex, portMAX_DELAY );
-#define JOLT_GUI_SEM_GIVE    xSemaphoreGive( jolt_gui_store.mutex );
+void jolt_gui_sem_take();
+void jolt_gui_sem_give();
 
 /**********************
  *   GLOBAL FUNCTIONS
