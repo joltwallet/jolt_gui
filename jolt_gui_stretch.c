@@ -42,7 +42,7 @@ void jolt_gui_stretch(const char *title, const char *label, uint8_t *key,
     // The stretch task is defined with storage because we (optionally) use
     // the ataes132a for hardware-bound encryption.
     xTaskCreate(storage_stretch_task,
-            "PinStretch", 8000,
+            "PinStretch", CONFIG_JOLT_TASK_STACK_SIZE_DERIVATION,
             (void *)&status,
             CONFIG_JOLT_TASK_PRIORITY_DERIVATION, &(status.derivation_task));
 }

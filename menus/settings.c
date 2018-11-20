@@ -5,7 +5,7 @@
 
 #include "esp_log.h"
 
-#include "radio/wifi.h"
+#include "hal/radio/wifi.h"
 #include "hal/storage/storage.h"
 #include "jolt_gui/jolt_gui.h"
 #include "hal/lv_drivers/display/ssd1306.h"
