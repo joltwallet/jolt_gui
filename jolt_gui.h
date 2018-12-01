@@ -28,7 +28,7 @@
     #include "jolttypes.h"
     #include "bipmnemonic.h"
 
-    #include "elfloader.h"
+    #include "jelfloader.h"
 #endif
 
 
@@ -55,7 +55,7 @@ struct {
         hardware_monitor_t indicators[JOLT_GUI_STATUSBAR_INDEX_NUM];
     } statusbar;
     struct {
-        ELFLoaderContext_t *ctx;
+        jelfLoaderContext_t *ctx;
         lv_obj_t *scr;
         int argc;
         char **argv;
