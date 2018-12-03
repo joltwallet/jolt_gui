@@ -29,6 +29,8 @@ static lv_action_t factory_reset_back( lv_obj_t *btn ) {
 
 static lv_action_t factory_reset_enter( lv_obj_t *btn ) {
     storage_factory_reset();
+    esp_restart();
+    // Shouldn't return because device reset
     return LV_RES_INV;
 }
 
