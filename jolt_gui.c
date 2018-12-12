@@ -60,7 +60,6 @@ lv_action_t jolt_gui_scr_del() {
             return 0;
         }
     }
-    MSG("deleting %p\n", parent);
     lv_obj_del(parent);
     return 0;
 }

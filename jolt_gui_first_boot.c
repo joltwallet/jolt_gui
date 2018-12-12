@@ -63,6 +63,9 @@ static jolt_err_t get_nth_word(char buf[], size_t buf_len,
     return E_FAILURE;
 }
 
+/* Generates 256-bits of entropy into mnemonic_bin.
+ * Computes mnemonic string mnemonic from mnemonic_bin. The string is
+ * used for display/backup purposes only.*/
 static void generate_mnemonic() {
     bm_entropy256(mnemonic_bin);
 #if CONFIG_JOLT_STORE_ATAES132A
@@ -84,6 +87,7 @@ static void generate_mnemonic() {
     ESP_LOGI(TAG, "mnemonic %s", mnemonic);
 }
 
+/* Saves setup information to storage */
 static lv_action_t stretch_cb(lv_obj_t *dummy) {
     storage_set_mnemonic(mnemonic_bin, jolt_gui_store.derivation.pin);
     storage_set_pin_count(0); // Only does something if pin_count is setable
@@ -132,8 +136,9 @@ static lv_action_t screen_finish_create(lv_obj_t *num) {
 
 static lv_action_t screen_pin_verify_create(lv_obj_t *num) {
     jolt_gui_num_get_hash(num, jolt_gui_store.derivation.pin); // compute hash for first pin entry screen
-    // Delete original pin entry screen
+    // Delete original PIN entry screen
     lv_obj_del(lv_obj_get_parent(num));
+    // Create Verify PIN screen
     jolt_gui_scr_num_create( "PIN Verify", CONFIG_JOLT_GUI_PIN_LEN,
             JOLT_GUI_NO_DECIMAL, &screen_finish_create); 
     return 0;
@@ -174,3 +179,8 @@ void jolt_gui_first_boot_create() {
     jolt_gui_scr_set_back_action(scr, NULL);
 }
 
+/* Prompts user for pin and performs the rest of setup for a given entropy */
+void jolt_gui_restore_sequence(uint256_t entropy) {
+    memcpy(mnemonic_bin, entropy, 32);
+    screen_pin_entry_create( NULL );
+}
